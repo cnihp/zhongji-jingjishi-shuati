@@ -1,287 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>中级经济师·刷题工具</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-  background: #f0f2f5;
-  color: #1a1a2e;
-  min-height: 100vh;
-}
-.app-header {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: #fff;
-  padding: 20px 0;
-  text-align: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-}
-.app-header h1 { font-size: 24px; font-weight: 700; letter-spacing: 2px; }
-.app-header p { font-size: 13px; color: #a0aec0; margin-top: 6px; }
-.container { max-width: 820px; margin: 0 auto; padding: 16px; }
-
-/* 导航标签 */
-.tabs {
-  display: flex; gap: 4px; background: #fff; border-radius: 12px;
-  padding: 4px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  overflow-x: auto; position: sticky; top: 8px; z-index: 10;
-}
-.tab-btn {
-  flex: 1; min-width: 80px; padding: 10px 8px; border: none;
-  background: transparent; border-radius: 8px; font-size: 13px;
-  font-weight: 600; color: #666; cursor: pointer; transition: all 0.2s;
-  white-space: nowrap;
-}
-.tab-btn:hover { background: #f0f2f5; color: #1a1a2e; }
-.tab-btn.active { background: #1a1a2e; color: #fff; }
-.tab-btn .badge {
-  display: inline-block; background: #e74c3c; color: #fff;
-  font-size: 10px; padding: 1px 6px; border-radius: 10px; margin-left: 4px;
-}
-
-
-/* 章节按钮 */
-#chapterBar {
-  margin-bottom: 16px;
-}
-.chapter-btns {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  background: #fff; border-radius: 12px; padding: 10px 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.chapter-btn {
-  padding: 6px 14px; border: 2px solid #e2e8f0; border-radius: 20px;
-  background: transparent; font-size: 13px; font-weight: 600;
-  color: #666; cursor: pointer; transition: all 0.2s;
-}
-
-.section-btns {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  background: #fff; border-radius: 12px; padding: 8px 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.section-btn {
-  padding: 5px 12px; border: 2px solid #e2e8f0; border-radius: 16px;
-  background: transparent; font-size: 12px; font-weight: 500;
-  color: #666; cursor: pointer; transition: all 0.2s;
-  white-space: nowrap;
-}
-.section-btn:hover { border-color: #93c5fd; background: #eff6ff; }
-.section-btn.active { border-color: #2563eb; background: #2563eb; color: #fff; }
-.chapter-btn:hover { border-color: #a0aec0; background: #f8fafc; }
-.chapter-btn.active { border-color: #1a1a2e; background: #1a1a2e; color: #fff; }
-
-/* 统计卡片 */
-.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-.stat-card {
-  background: #fff; border-radius: 12px; padding: 14px 12px;
-  text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.stat-card .num { font-size: 22px; font-weight: 700; color: #1a1a2e; }
-.stat-card .label { font-size: 11px; color: #888; margin-top: 4px; }
-
-/* 模式切换 */
-.mode-switch {
-  display: flex; gap: 4px; background: #fff; border-radius: 12px;
-  padding: 4px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.mode-switch .mode-btn {
-  flex: 1; padding: 8px 12px; border: none; background: transparent;
-  border-radius: 8px; font-size: 13px; font-weight: 600; color: #666;
-  cursor: pointer; transition: all 0.2s;
-}
-.mode-switch .mode-btn:hover { background: #f0f2f5; }
-.mode-switch .mode-btn.active { background: #16213e; color: #fff; }
-
-/* 题目区域 */
-#questionArea {
-  background: #fff; border-radius: 12px; padding: 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 16px;
-}
-.q-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
-}
-.q-number {
-  background: #1a1a2e; color: #fff; padding: 4px 12px;
-  border-radius: 20px; font-size: 13px; font-weight: 600;
-}
-.q-type {
-  background: #e2e8f0; color: #4a5568; padding: 4px 12px;
-  border-radius: 20px; font-size: 12px; font-weight: 600;
-}
-.q-type.multi { background: #fef3c7; color: #92400e; }
-.q-type.case { background: #dbeafe; color: #1e40af; }
-.chapter-tag {
-  display: inline-block; background: #e8e8ff; color: #444;
-  padding: 4px 12px; border-radius: 20px; font-size: 12px;
-  font-weight: 600; margin-left: 4px;
-}
-.q-text {
-  font-size: 16px; line-height: 1.8; margin-bottom: 20px; font-weight: 500;
-}
-
-/* 选项 */
-.options { display: flex; flex-direction: column; gap: 10px; }
-.option {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px;
-  cursor: pointer; transition: all 0.2s; font-size: 15px; line-height: 1.6;
-}
-.option:hover { border-color: #a0aec0; background: #f8fafc; }
-.option.selected { border-color: #1a1a2e; background: #f0f2f5; }
-.option.correct { border-color: #22c55e; background: #f0fdf4; }
-.option.wrong { border-color: #ef4444; background: #fef2f2; }
-.option.disabled { cursor: default; opacity: 0.85; }
-.option .letter {
-  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
-  background: #e2e8f0; display: flex; align-items: center;
-  justify-content: center; font-weight: 700; font-size: 13px;
-}
-.option.selected .letter { background: #1a1a2e; color: #fff; }
-.option.correct .letter { background: #22c55e; color: #fff; }
-.option.wrong .letter { background: #ef4444; color: #fff; }
-
-/* 底部操作栏 */
-.action-bar {
-  display: flex; gap: 10px; flex-wrap: wrap;
-  margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;
-}
-.btn {
-  padding: 10px 20px; border: none; border-radius: 10px; font-size: 14px;
-  font-weight: 600; cursor: pointer; transition: all 0.2s;
-}
-.btn-primary { background: #1a1a2e; color: #fff; }
-.btn-primary:hover { background: #16213e; }
-.btn-primary:disabled { background: #a0aec0; cursor: not-allowed; }
-.btn-outline { background: #fff; color: #1a1a2e; border: 2px solid #1a1a2e; }
-.btn-outline:hover { background: #f0f2f5; }
-.btn-success { background: #22c55e; color: #fff; }
-.btn-success:hover { background: #16a34a; }
-.btn-danger { background: #ef4444; color: #fff; }
-.btn-danger:hover { background: #dc2626; }
-.btn-sm { padding: 6px 14px; font-size: 12px; }
-
-/* 解析 */
-.explanation {
-  margin-top: 16px; padding: 16px; background: #f8fafc;
-  border-radius: 12px; border-left: 4px solid #1a1a2e;
-  display: none; font-size: 14px; line-height: 1.8;
-}
-.explanation.show { display: block; }
-.explanation .label { font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
-
-/* 进度条 */
-.progress-bar {
-  height: 4px; background: #e2e8f0; border-radius: 4px;
-  margin-bottom: 16px; overflow: hidden;
-}
-.progress-bar .fill {
-  height: 100%; background: linear-gradient(90deg, #1a1a2e, #4a5568);
-  border-radius: 4px; transition: width 0.3s;
-}
-
-/* 结果统计 */
-.result-box {
-  text-align: center; padding: 30px 20px;
-}
-.result-box .big-score {
-  font-size: 48px; font-weight: 800; color: #1a1a2e;
-}
-.result-box .pass { color: #22c55e; font-size: 20px; font-weight: 700; }
-.result-box .fail { color: #ef4444; font-size: 20px; font-weight: 700; }
-
-/* 错题集 */
-.wrong-list { margin-top: 12px; }
-.wrong-item {
-  padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;
-  margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
-  font-size: 14px;
-}
-.wrong-item:hover { background: #f8fafc; border-color: #1a1a2e; }
-.wrong-item .wi-label { color: #ef4444; font-weight: 600; margin-bottom: 4px; }
-.wrong-item .wi-type { color: #888; font-size: 12px; }
-
-@media (max-width: 600px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .app-header h1 { font-size: 20px; }
-  .container { padding: 10px; }
-  #questionArea { padding: 16px; }
-  .q-text { font-size: 15px; }
-}
-</style>
-</head>
-<body>
-
-<div class="app-header">
-  <h1>中级经济师·刷题工具</h1>
-  <p>《经济基础知识》·《农业经济专业知识与实务》· 全真模拟刷题</p>
-</div>
-
-<div class="container">
-
-  <!-- 导航标签 -->
-  <div class="tabs" id="tabBar">
-    <button class="tab-btn active" data-tab="practice">练习模式</button>
-    <button class="tab-btn" data-tab="exam">模拟考试</button>
-    <button class="tab-btn" data-tab="chapter">章节练习</button>
-    <button class="tab-btn" data-tab="wrong">错题集<span class="badge" id="wrongBadge">0</span></button>
-  </div>
-
-  <!-- 统计 -->
-  <div class="stats-row" id="statsRow">
-    <div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题</div></div>
-    <div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答</div></div>
-    <div class="stat-card"><div class="num" id="correctQ">0</div><div class="label">正确</div></div>
-    <div class="stat-card"><div class="num" id="rateQ">0%</div><div class="label">正确</div></div>
-  </div>
-
-  <!-- 模式切换 -->
-  <div class="mode-switch" id="modeSwitch">
-    <button class="mode-btn active" data-mode="all">全部题目</button>
-    <button class="mode-btn" data-mode="single">单选题</button>
-    <button class="mode-btn" data-mode="multi">多选题</button>
-  </div>
-
-  <!-- 进度条 -->
-  <div class="progress-bar"><div class="fill" id="progressFill" style="width:0%"></div></div>
-
-  <!-- 题目区域 -->
-  
-  <!-- 章节选择 -->
-  <div id="chapterBar" style="display:none;">
-    <div class="chapter-btns" id="chapterBtns">
-      <button class="chapter-btn active" data-chapter="all">全部章节</button>
-    </div>
-  <div id="sectionBar" style="display:none;margin-bottom:12px;">
-    <div class="section-btns" id="sectionBtns"></div>
-  </div>
-  </div>
-
-  <div id="questionArea">
-    <div id="qContent"></div>
-  </div>
-
-  <!-- 底部操作栏 -->
-  <div class="action-bar" id="actionBar">
-    <button class="btn btn-outline btn-sm" id="prevBtn" disabled>&#x2190; 上一题</button>
-    <button class="btn btn-primary" id="submitBtn">提交答案</button>
-    <button class="btn btn-outline" id="showAnsBtn">看答案</button>
-    <button class="btn btn-success btn-sm" id="nextBtn">下一题&#x2192;</button>
-    <button class="btn btn-danger btn-sm" id="resetBtn" style="margin-left:auto;">重新开始</button>
-  </div>
-
-</div>
-
-<!-- 题库数据从外部文件加载 -->
-<script src="questions.js"></script>
-
-<script>
-
-// ================ 状态管理 ================
+// ================ 状?================
 let allQuestions = [...questionBank];
 let currentFilter = 'all';
 let currentTab = 'practice';
@@ -388,7 +105,7 @@ function render() {
     const correctStr = correctAnswer.map(i => letters[i]).join(', ');
     const isCorrect = state.isCorrect;
     html += `<div class="explanation show">`;
-    html += `<div class="label">${isCorrect ? '&#x2705; 回答正确' : '&#x274C; 回答错误'} · 正确答案：${correctStr}</div>`;
+    html += `<div class="label">${isCorrect ? '&#x2705; 回答正确' : '&#x274C; 回答错误'} · 正确答案?{correctStr}</div>`;
     html += `<div>${q.explanation}</div>`;
     html += '</div>';
   } else {
@@ -397,7 +114,7 @@ function render() {
 
   document.getElementById('qContent').innerHTML = html;
 
-  // 按钮状态  document.getElementById('prevBtn').disabled = (currentIndex === 0);
+  // 按钮状?  document.getElementById('prevBtn').disabled = (currentIndex === 0);
   document.getElementById('nextBtn').disabled = (currentIndex >= qs.length - 1);
   const subBtn = document.getElementById('submitBtn');
   const showBtn = document.getElementById('showAnsBtn');
@@ -444,7 +161,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
   if (q.type === 'single') {
     isCorrect = sortedSelected.length === 1 && sortedCorrect.length === 1 && sortedSelected[0] === sortedCorrect[0];
   } else {
-    // 多选案例：完全正确才算正确（模拟考试严格模式）    isCorrect = sortedSelected.length === sortedCorrect.length && sortedSelected.every((v,i) => v === sortedCorrect[i]);
+    // 多?案例：完全正确才算正确（模拟考试严格模式?    isCorrect = sortedSelected.length === sortedCorrect.length && sortedSelected.every((v,i) => v === sortedCorrect[i]);
   }
   state.submitted = true;
   state.isCorrect = isCorrect;
@@ -577,7 +294,7 @@ function buildSectionButtons(chapterName) {
   if (!container) return;
   var bar = document.getElementById('sectionBar');
   if (secSet.size === 0) { bar.style.display = 'none'; return; }
-  var html = '<button class="section-btn active" data-section="all">全部</button>';
+  var html = '<button class="section-btn active" data-section="all">全部?/button>';
   Array.from(secSet).sort().forEach(function(sec) {
     html += '<button class="section-btn" data-section="' + sec.replace(/'/g, "\\'") + '">' + sec + '</button>';
   });
@@ -643,8 +360,3 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
 loadState();
 buildChapterButtons();
 render();
-</script>
-</body>
-</html>
-
-
