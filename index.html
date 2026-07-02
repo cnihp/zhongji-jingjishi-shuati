@@ -413,16 +413,328 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ===================== Login Modal ===================== */
+.login-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.login-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 36px 32px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  animation: slideUp 0.35s ease;
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.login-modal .avatar {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+}
+.login-modal h2 { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+.login-modal p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
+.login-modal input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.login-modal input:focus { border-color: #1e293b; }
+.login-modal .login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.2s;
+}
+.login-modal .login-btn:hover { background: #334155; }
+.login-modal .user-list {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+.login-modal .user-list p { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+.login-modal .user-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  margin: 4px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 13px;
+  font-family: inherit;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.login-modal .user-btn:hover { border-color: #1e293b; background: #f8fafc; }
+
+/* User badge */
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 10px;
+  background: #fff;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+  position: relative;
+}
+.user-badge:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.user-badge .dot {
+  width: 8px; height: 8px;
+  background: #16a34a;
+  border-radius: 50%;
+}
+.user-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  padding: 6px;
+  min-width: 120px;
+  z-index: 100;
+}
+.user-dropdown.show { display: block; }
+.user-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #475569;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.user-dropdown button:hover { background: #f8fafc; }
+.user-dropdown .logout-btn { color: #ef4444; }
+.user-dropdown .logout-btn:hover { background: #fef2f2; }
+
+
+/* ===================== Login Modal ===================== */
+.login-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.login-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 36px 32px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  animation: slideUp 0.35s ease;
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.login-modal .avatar {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+}
+.login-modal h2 { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+.login-modal p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
+.login-modal input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.login-modal input:focus { border-color: #1e293b; }
+.login-modal .login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.2s;
+}
+.login-modal .login-btn:hover { background: #334155; }
+.login-modal .user-list {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+.login-modal .user-list p { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+.login-modal .user-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  margin: 4px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 13px;
+  font-family: inherit;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.login-modal .user-btn:hover { border-color: #1e293b; background: #f8fafc; }
+
+/* User badge */
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 10px;
+  background: #fff;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+  position: relative;
+}
+.user-badge:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.user-badge .dot {
+  width: 8px; height: 8px;
+  background: #16a34a;
+  border-radius: 50%;
+}
+.user-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  padding: 6px;
+  min-width: 120px;
+  z-index: 100;
+}
+.user-dropdown.show { display: block; }
+.user-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #475569;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.user-dropdown button:hover { background: #f8fafc; }
+.user-dropdown .logout-btn { color: #ef4444; }
+.user-dropdown .logout-btn:hover { background: #fef2f2; }
+
 </style>
 </head>
 <body>
 
 <div class="app-wrap">
   <!-- Header -->
-  <header class="app-header">
-    <h1>📖 中级经济师 <span>·</span> 刷题工具</h1>
-    <p>《经济基础知识》·《农业经济专业知识与实务》· 全真模拟刷题</p>
-  </header>
+  <header class="app-h<p>《经济基础知识》·《农业经济专业知识与实务》· 全真模拟刷题</p>
+    <div style=text-align:right;margin-top:12px;display:flex;justify-content:center;>
+      <div class=user-badge id=userBadge onclick=toggleUserMenu()>
+        <span class=dot></span>
+        <span id=userNameDisplay>未登录</span>
+        <span style=font-size:10px;color:#94a3b8;>▼</span>
+        <div class=user-dropdown id=userDropdown>
+          <button onclick=showLoginModal()>切换用户</button>
+          <button class=logout-btn onclick=logoutUser()>退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header><!-- Login Modal -->
+<div class="login-overlay" id="loginOverlay" style="display:none;">
+  <div class="login-modal">
+    <div class="avatar">👤</div>
+    <h2>欢迎使用刷题工具</h2>
+    <p>请输入昵称开始刷题，不同用户互不干扰</p>
+    <input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">开始刷题</button>
+    <div class="user-list" id="userList"></div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="login-overlay" id="loginOverlay" style="display:none;">
+  <div class="login-modal">
+    <div class="avatar">👤</div>
+    <h2>欢迎使用刷题工具</h2>
+    <p>请输入昵称开始刷题，不同用户互不干扰</p>
+    <input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">开始刷题</button>
+    <div class="user-list" id="userList"></div>
+  </div>
+</div>
+
 
   <!-- Stats -->
   <div class="stats-row" id="statsRow">
@@ -751,58 +1063,49 @@ document.getElementById('resetBtn').addEventListener('click', function() {
 });
 
 // ==================== Chapter / Section Buttons ====================
-function buildChapterButtons() {
+// Chinese number to integer
+const chnNum = {"零":0,"一":1,"二":2,"三":3,"四":4,"五":5,"六":6,"七":7,"八":8,"九":9,"十":10,"十一":11,"十二":12,"十三":13,"十四":14,"十五":15,"十六":16,"十七":17,"十八":18,"十九":19,"二十":20,"二十一":21,"二十二":22,"二十三":23,"二十四":24,"二十五":25,"二十六":26,"二十七":27,"二十八":28,"二十九":29,"三十":30,"三十一":31,"三十二":32,"三十三":33,"三十四":34,"三十五":35,"三十六":36,"三十七":37,"三十八":38,"三十九":39,"四十":40};
+function chToNum(s) { const m = s.match(/[零一二三四五六七八九十]+/); return m ? (chnNum[m[0]] || 99) : 99; }function buildChapterButtons() {
   const chSet = new Set();
   allQuestions.forEach(q => { if (q.chapter) chSet.add(q.chapter); });
-  const container = document.getElementById('chapterBtns');
+  const container = document.getElementById("chapterBtns");
   if (!container) return;
 
-  let html = '<button class="chip active-all" data-chapter="all">📂 全部章节</button>';
-
-  // Group chapters
-  const groups = [
-    { name: '📊 经济学基础', chs: [] },
-    { name: '💰 财政', chs: [] },
-    { name: '🏦 货币与金融', chs: [] },
-    { name: '📈 统计', chs: [] },
-    { name: '📋 会计', chs: [] },
-    { name: '⚖️ 法律', chs: [] },
-    { name: '🌾 农业经济', chs: [] },
-  ];
-  const chList = Array.from(chSet).sort();
-  chList.forEach(ch => {
-    const chNum = parseInt(ch.match(/\d+/));
-    if (ch.includes('农业')) groups[6].chs.push(ch);
-    else if (chNum <= 10) groups[0].chs.push(ch);
-    else if (chNum <= 16) groups[1].chs.push(ch);
-    else if (chNum <= 21) groups[2].chs.push(ch);
-    else if (chNum <= 25) groups[3].chs.push(ch);
-    else if (chNum <= 29) groups[4].chs.push(ch);
-    else groups[5].chs.push(ch);
+  // Sort chapters by numeric value
+  const chList = Array.from(chSet).sort((a, b) => {
+    const na = chToNum(a), nb = chToNum(b);
+    if (na !== nb) return na - nb;
+    const ma = a.match(/\d+$/), mb = b.match(/\d+$/);
+    if (ma && mb) return parseInt(ma[0]) - parseInt(mb[0]);
+    return a.localeCompare(b);
   });
 
-  groups.forEach(g => {
-    if (g.chs.length === 0) return;
-    html += '<button class="chip part-label">' + g.name + '</button>';
-    g.chs.forEach(ch => {
-      html += '<button class="chip" data-chapter="' + ch.replace(/'/g, "\\'") + '">' + ch + '</button>';
-    });
+  let html = "<button class=\"chip active-all\" data-chapter=\"all\">\U0001f4c2 全部章节</button>";
+  chList.forEach(ch => {
+    const num = chToNum(ch);
+    if (num === 1) html += "<button class=\"chip part-label\">\U0001f4ca 经济学基础（第1-10章）</button>";
+    else if (num === 11) html += "<button class=\"chip part-label\">\U0001f4b0 财政（第11-16章）</button>";
+    else if (num === 17) html += "<button class=\"chip part-label\">\U0001f3e6 货币与金融（第17-22章）</button>";
+    else if (num === 23) html += "<button class=\"chip part-label\">\U0001f4c8 统计（第23-27章）</button>";
+    else if (num === 28) html += "<button class=\"chip part-label\">\U0001f4cb 会计（第28-32章）</button>";
+    else if (num === 33) html += "<button class=\"chip part-label\">\u2696\ufe0f 法律（第33-37章）</button>";
+    else if (num === 99) html += "<button class=\"chip part-label\">\U0001f4dd 模拟试卷</button>";
+    html += "<button class=\"chip\" data-chapter=\"" + ch.replace(/'/g, "\\'") + "\">" + ch + "</button>";
   });
 
   container.innerHTML = html;
-  container.querySelectorAll('.chip[data-chapter]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      container.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
+  container.querySelectorAll(".chip[data-chapter]").forEach(btn => {
+    btn.addEventListener("click", function() {
+      container.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
+      this.classList.add("active");
       currentChapter = this.dataset.chapter;
-      currentSection = 'all';
+      currentSection = "all";
       currentIndex = 0;
       buildSectionButtons(currentChapter);
       render();
     });
   });
 }
-
 function buildSectionButtons(chapterName) {
   const secSet = new Set();
   allQuestions.forEach(q => { if (q.chapter === chapterName && q.section) secSet.add(q.section); });
@@ -886,6 +1189,135 @@ document.addEventListener('keydown', function(e) {
     document.getElementById('showAnsBtn').click();
   }
 });
+
+
+// ==================== User Login System ====================
+let currentUser = null;
+const STORAGE_PREFIX = 'examState_';
+
+function getStorageKey() { return STORAGE_PREFIX + currentUser; }
+
+function getSavedUsers() {
+  try { return JSON.parse(localStorage.getItem('examUsers') || '[]'); } catch(e) { return []; }
+}
+function saveUserList(users) {
+  try { localStorage.setItem('examUsers', JSON.stringify(users)); } catch(e) {}
+}
+
+function showLoginModal() {
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('loginInput').value = '';
+  document.getElementById('loginInput').focus();
+  const users = getSavedUsers();
+  const list = document.getElementById('userList');
+  if (users.length > 0) {
+    let html = '<p>已有用户，点击切换：</p>';
+    users.forEach(function(u) {
+      html += '<button class="user-btn" data-username="' + u.replace(/'/g, '') + '">' + u + '</button>';
+    });
+    list.innerHTML = html;
+    list.style.display = 'block';
+  } else {
+    list.style.display = 'none';
+  }
+}function hideLoginModal() {
+  document.getElementById('loginOverlay').style.display = 'none';
+}
+
+function doLogin() {
+  const name = document.getElementById('loginInput').value.trim();
+  if (!name) { alert('请输入昵称'); return; }
+  loginAs(name);
+}
+
+function loginAs(name) {
+  currentUser = name;
+  // Save to user list
+  const users = getSavedUsers();
+  if (!users.includes(name)) {
+    users.push(name);
+    saveUserList(users);
+  }
+  // Load user data
+  loadState();
+  hideLoginModal();
+  document.getElementById('userNameDisplay').textContent = currentUser;
+  render();
+}
+
+function logoutUser() {
+  currentUser = null;
+  document.getElementById('userDropdown').classList.remove('show');
+  // Reset everything
+  answeredState = {};
+  wrongSet = new Set();
+  currentIndex = 0;
+  showLoginModal();
+  render();
+}
+
+function toggleUserMenu() {
+  const dd = document.getElementById('userDropdown');
+  dd.classList.toggle('show');
+}
+
+// Close dropdown on click outside
+document.addEventListener('click', function(e) {
+  const badge = document.getElementById('userBadge');
+  if (badge && !badge.contains(e.target)) {
+    const dd = document.getElementById('userDropdown');
+    if (dd) dd.classList.remove('show');
+  }
+});
+
+// Override save/load to use user-specific keys
+const _origSaveState = saveState;
+const _origLoadState = loadState;
+
+saveState = function() {
+  if (!currentUser) return;
+  const data = { answeredState, wrongSet: [...wrongSet] };
+  try { localStorage.setItem(getStorageKey(), JSON.stringify(data)); } catch(e) {}
+};
+
+loadState = function() {
+  answeredState = {};
+  wrongSet = new Set();
+  if (!currentUser) return;
+  try {
+    const raw = localStorage.getItem(getStorageKey());
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.answeredState) answeredState = data.answeredState;
+    if (data.wrongSet) wrongSet = new Set(data.wrongSet);
+  } catch(e) {}
+};
+
+// Init: check if user already logged in from session
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if there's a saved current user
+  const savedUser = sessionStorage.getItem('examCurrentUser');
+  if (savedUser) {
+    loginAs(savedUser);
+  } else {
+    showLoginModal();
+  }
+});
+
+// Also save current user to session storage when login
+const _origLoginAs = loginAs;
+loginAs = function(name) {
+  _origLoginAs(name);
+  try { sessionStorage.setItem('examCurrentUser', name); } catch(e) {}
+};
+
+// And clear from session on logout
+const _origLogout = logoutUser;
+logoutUser = function() {
+  _origLogout();
+  try { sessionStorage.removeItem('examCurrentUser'); } catch(e) {}
+};
+
 
 // ==================== Init ====================
 loadState();
