@@ -102,6 +102,10 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 .btn-ghost{background:transparent;color:#64748b;padding:10px 14px}
 .btn-ghost:hover:not(:disabled){color:#f87171;background:rgba(239,68,68,0.08)}
 .btn-sm{padding:8px 16px;font-size:12px}
+
+.user-badge-simple{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;font-size:13px;font-weight:600;color:#cbd5e1;font-family:inherit}
+.user-badge-simple .dot{width:7px;height:7px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px rgba(34,197,94,0.5)}
+
 .login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(16px);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease}
 .login-modal{background:#1a1a2e;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:44px 40px 36px;max-width:400px;width:92%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.5);animation:slideDown 0.4s ease}
 .login-modal .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(217,119,6,0.25)}
@@ -143,7 +147,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 </head>
 <body>
 <div class="app-wrap">
-<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"></div><div class="user-section"><div class="user-badge" id="userBadge" onclick="toggleUserMenu()"><span class="dot"></span><span id="userNameDisplay">未登录</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg><div class="user-dropdown" id="userDropdown"><button onclick="showLoginModal()">切换用户</button><button class="logout-btn" onclick="logoutUser()">退出登录</button></div></div></div></header>
+<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div></header>
 <div class="stats-row anim-fade" style="animation-delay:0.1s"><div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div><div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div><div class="stat-card green"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div><div class="stat-card gold"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div></div>
 <div class="tab-bar anim-fade" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
 <div class="mode-pills anim-fade" style="animation-delay:0.2s" id="modePills"><button class="pill-btn active" data-mode="all">全部</button><button class="pill-btn" data-mode="single">单选题</button><button class="pill-btn" data-mode="multi">多选题</button></div>
@@ -154,6 +158,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 </div>
 <div class="login-overlay" id="loginOverlay" style="display:none"><div class="login-modal"><div class="avatar">&#x1F464;</div><h2>欢迎使用刷题工具</h2><p class="sub">请输入昵称开始刷题，不同用户互不干扰</p><input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20" onkeydown="if(event.key==='Enter')doLogin()"><button class="login-btn" onclick="doLogin()">开始刷题</button><div class="user-list" id="userList"></div></div></div>
 
+<div style="text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.04)"><a href="#" onclick="logoutUser();return false" style="color:rgba(255,255,255,0.15);font-size:11px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.3)'" onmouseout="this.style.color='rgba(255,255,255,0.15)'">注销</a></div>
 <script src="questions.js"></script>
 
 <script>
@@ -573,19 +578,9 @@ function showLoginModal() {
   document.getElementById('loginOverlay').style.display = 'flex';
   document.getElementById('loginInput').value = '';
   document.getElementById('loginInput').focus();
-  const users = getSavedUsers();
-  const list = document.getElementById('userList');
-  if (users.length > 0) {
-    let html = '<p>已有用户，点击切换：</p>';
-    users.forEach(function(u) {
-      html += '<button class="user-btn" data-username="' + u.replace(/'/g, '') + '">' + u + '</button>';
-    });
-    list.innerHTML = html;
-    list.style.display = 'block';
-  } else {
-    list.style.display = 'none';
-  }
-}function hideLoginModal() {
+  document.getElementById('userList').style.display = 'none';
+}
+function hideLoginModal() {
   document.getElementById('loginOverlay').style.display = 'none';
 }
 
@@ -621,19 +616,6 @@ function logoutUser() {
   render();
 }
 
-function toggleUserMenu() {
-  const dd = document.getElementById('userDropdown');
-  dd.classList.toggle('show');
-}
-
-// Close dropdown on click outside
-document.addEventListener('click', function(e) {
-  const badge = document.getElementById('userBadge');
-  if (badge && !badge.contains(e.target)) {
-    const dd = document.getElementById('userDropdown');
-    if (dd) dd.classList.remove('show');
-  }
-});
 
 // Override save/load to use user-specific keys
 const _origSaveState = saveState;
