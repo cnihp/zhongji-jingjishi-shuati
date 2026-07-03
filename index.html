@@ -1,794 +1,159 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>中级经济师 · 刷题工具</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
-/* ===================== Reset & Base ===================== */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-size: 16px; }
-body {
-  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f5f0eb;
-  color: #1e293b;
-  min-height: 100vh;
-  line-height: 1.6;
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;background:#0a0a1a;color:#e2e8f0;min-height:100vh;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 50%,rgba(30,41,59,0.6) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(217,119,6,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(30,41,59,0.4) 0%,transparent 50%);pointer-events:none;z-index:0}
+::selection{background:rgba(217,119,6,0.3);color:#fff}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.anim-fade{animation:fadeUp 0.5s ease both}
+.app-wrap{max-width:840px;margin:0 auto;padding:32px 24px 64px;position:relative;z-index:1}
+.app-header{text-align:center;padding:40px 0 32px}
+.app-header .logo{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#d97706,#f59e0b);font-size:28px;margin-bottom:16px;box-shadow:0 8px 32px rgba(217,119,6,0.25)}
+.app-header h1{font-size:28px;font-weight:900;letter-spacing:1px;background:linear-gradient(135deg,#fbbf24,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.app-header p{font-size:13px;color:#64748b;margin-top:4px;letter-spacing:0.5px}
+.app-header .glow-line{width:60px;height:3px;margin:12px auto 0;background:linear-gradient(90deg,transparent,#d97706,transparent);border-radius:2px}
+.user-section{display:flex;justify-content:center;margin-top:16px}
+.user-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;font-size:13px;font-weight:600;color:#cbd5e1;cursor:pointer;transition:all 0.25s;position:relative;font-family:inherit}
+.user-badge:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)}
+.user-badge .dot{width:7px;height:7px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px rgba(34,197,94,0.5)}
+.user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#1e293b;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:4px;min-width:130px;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.user-dropdown.show{display:block;animation:slideDown 0.2s ease}
+.user-dropdown button{display:block;width:100%;padding:8px 14px;border:none;background:transparent;border-radius:8px;font-size:13px;font-family:inherit;color:#94a3b8;cursor:pointer;text-align:left;transition:all 0.15s}
+.user-dropdown button:hover{background:rgba(255,255,255,0.06);color:#e2e8f0}
+.user-dropdown .logout-btn{color:#f87171}
+.user-dropdown .logout-btn:hover{background:rgba(239,68,68,0.1)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px 8px;text-align:center;transition:all 0.3s;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity 0.3s}
+.stat-card:hover::before{opacity:1}
+.stat-card:hover{background:rgba(255,255,255,0.06);transform:translateY(-2px)}
+.stat-card .num{font-size:24px;font-weight:800;color:#f1f5f9;line-height:1.2}
+.stat-card .label{font-size:11px;color:#64748b;margin-top:4px}
+.stat-card.gold .num{background:linear-gradient(135deg,#fbbf24,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-card.green .num{color:#22c55e}
+.tab-bar{display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:4px;margin-bottom:20px}
+.tab-btn{flex:1;padding:12px 6px;border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;color:#64748b;background:transparent;cursor:pointer;transition:all 0.3s;white-space:nowrap;position:relative}
+.tab-btn:hover{color:#94a3b8;background:rgba(255,255,255,0.04)}
+.tab-btn.active{color:#fff;background:rgba(217,119,6,0.15);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05)}
+.tab-btn .badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;margin-left:4px;vertical-align:middle}
+.mode-pills{display:flex;gap:8px;margin-bottom:20px}
+.pill-btn{padding:7px 18px;border:1px solid rgba(255,255,255,0.1);border-radius:100px;background:transparent;font-size:12px;font-weight:600;font-family:inherit;color:#64748b;cursor:pointer;transition:all 0.25s}
+.pill-btn:hover{border-color:rgba(255,255,255,0.2);color:#94a3b8}
+.pill-btn.active{border-color:#d97706;background:rgba(217,119,6,0.12);color:#fbbf24;box-shadow:0 0 20px rgba(217,119,6,0.08)}
+#chapterSection{display:none;margin-bottom:20px}
+.chapter-panel,.section-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px}
+.chapter-panel{margin-bottom:8px}
+.chip-group{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:100px;background:transparent;font-size:12px;font-weight:500;font-family:inherit;color:#64748b;cursor:pointer;transition:all 0.2s}
+.chip:hover{border-color:rgba(255,255,255,0.2);color:#94a3b8;background:rgba(255,255,255,0.03)}
+.chip.active{border-color:#d97706;background:rgba(217,119,6,0.12);color:#fbbf24}
+.chip.active-all{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#e2e8f0}
+.chip.part-label{width:100%;border:none;background:transparent;font-size:11px;font-weight:700;color:#475569;padding:8px 2px 2px;cursor:default;pointer-events:none}
+.progress-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b,#fbbf24);border-radius:2px;transition:width 0.5s ease}
+.q-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(217,119,6,0.3),transparent)}
+.q-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px}
+.q-number{display:inline-flex;align-items:center;padding:3px 12px;border-radius:8px;background:rgba(255,255,255,0.06);font-size:12px;font-weight:700;color:#94a3b8}
+.q-tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600}
+.q-tag.single{background:rgba(59,130,246,0.15);color:#93c5fd}
+.q-tag.multi{background:rgba(217,119,6,0.15);color:#fcd34d}
+.q-chapter{display:inline-flex;align-items:center;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600;background:rgba(139,92,246,0.12);color:#c4b5fd}
+.q-text{font-size:16px;font-weight:500;line-height:1.9;margin-bottom:24px;color:#f1f5f9}
+.q-text p{margin-bottom:6px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all 0.25s;font-size:15px;line-height:1.6;user-select:none;background:rgba(255,255,255,0.02)}
+.opt:hover{border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.04)}
+.opt.selected{border-color:rgba(217,119,6,0.4);background:rgba(217,119,6,0.06)}
+.opt.correct{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.06);pointer-events:none}
+.opt.wrong{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.06);pointer-events:none}
+.opt.reveal-correct{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.03);pointer-events:none}
+.opt .letter{flex-shrink:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.06);color:#64748b;transition:all 0.25s}
+.opt.selected .letter{background:rgba(217,119,6,0.2);color:#fbbf24}
+.opt.correct .letter{background:rgba(34,197,94,0.2);color:#22c55e}
+.opt.wrong .letter{background:rgba(239,68,68,0.2);color:#f87171}
+.opt.reveal-correct .letter{background:rgba(34,197,94,0.15);color:#4ade80}
+.opt .opt-text{flex:1;min-width:0;color:#e2e8f0}
+.opt .opt-text p{margin:0}
+.explanation{margin-top:18px;padding:18px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:none}
+.explanation.show{display:block;animation:fadeUp 0.3s ease}
+.explanation .label{font-weight:700;color:#e2e8f0;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.explanation div:last-child{color:#94a3b8;font-size:14px;line-height:1.7}
+.action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 22px;border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.25s}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.3;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;box-shadow:0 4px 16px rgba(217,119,6,0.2)}
+.btn-primary:hover:not(:disabled){box-shadow:0 6px 24px rgba(217,119,6,0.3)}
+.btn-success{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 16px rgba(34,197,94,0.2)}
+.btn-success:hover:not(:disabled){box-shadow:0 6px 24px rgba(34,197,94,0.3)}
+.btn-outline{background:rgba(255,255,255,0.04);color:#94a3b8;border:1px solid rgba(255,255,255,0.1)}
+.btn-outline:hover:not(:disabled){border-color:rgba(255,255,255,0.2);color:#e2e8f0;background:rgba(255,255,255,0.06)}
+.btn-ghost{background:transparent;color:#64748b;padding:10px 14px}
+.btn-ghost:hover:not(:disabled){color:#f87171;background:rgba(239,68,68,0.08)}
+.btn-sm{padding:8px 16px;font-size:12px}
+.login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(16px);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease}
+.login-modal{background:#1a1a2e;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:44px 40px 36px;max-width:400px;width:92%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.5);animation:slideDown 0.4s ease}
+.login-modal .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(217,119,6,0.25)}
+.login-modal h2{font-size:20px;font-weight:700;color:#f1f5f9;margin-bottom:6px}
+.login-modal p.sub{font-size:13px;color:#64748b;margin-bottom:28px}
+.login-modal input{width:100%;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:15px;font-family:inherit;color:#e2e8f0;outline:none;transition:all 0.2s;box-sizing:border-box}
+.login-modal input:focus{border-color:#d97706;box-shadow:0 0 0 3px rgba(217,119,6,0.1)}
+.login-modal input::placeholder{color:#475569}
+.login-modal .login-btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:12px;transition:all 0.2s;box-shadow:0 4px 16px rgba(217,119,6,0.2)}
+.login-modal .login-btn:hover{box-shadow:0 6px 24px rgba(217,119,6,0.3)}
+.login-modal .user-list{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)}
+.login-modal .user-list p{font-size:12px;color:#475569;margin-bottom:10px}
+.login-modal .user-btn{display:inline-block;padding:7px 18px;margin:4px;border:1px solid rgba(255,255,255,0.08);border-radius:100px;background:transparent;font-size:13px;font-family:inherit;color:#94a3b8;cursor:pointer;transition:all 0.2s}
+.login-modal .user-btn:hover{border-color:#d97706;color:#fbbf24;background:rgba(217,119,6,0.08)}
+.empty-state{text-align:center;padding:56px 20px;color:#64748b}
+.empty-state .icon{font-size:48px;margin-bottom:16px;opacity:0.5}
+.empty-state p{font-size:14px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.15)}
+@media(max-width:640px){
+.app-wrap{padding:20px 16px 40px}
+.app-header{padding:28px 0 24px}
+.app-header h1{font-size:22px}
+.stats-row{grid-template-columns:repeat(2,1fr);gap:8px}
+.stat-card{padding:12px 6px}
+.stat-card .num{font-size:20px}
+.q-card{padding:20px;border-radius:16px}
+.q-text{font-size:15px}
+.opt{padding:12px 14px;font-size:14px;gap:12px}
+.action-bar{gap:6px}
+.btn{padding:8px 14px;font-size:12px}
+.tab-btn{font-size:12px;padding:10px 4px}
+.login-modal{padding:32px 24px 28px}
 }
-::selection { background: #fbbf24; color: #1e293b; }
-
-/* ===================== Utilities ===================== */
-.fade-in { animation: fadeUp 0.4s ease both; }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-/* ===================== App Shell ===================== */
-.app-wrap {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px 20px 48px;
-}
-
-/* Header */
-.app-header {
-  text-align: center;
-  padding: 32px 0 28px;
-}
-.app-header h1 {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  background: linear-gradient(135deg, #1e293b, #334155);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.app-header h1 span { color: #d97706; -webkit-text-fill-color: #d97706; }
-.app-header p {
-  font-size: 13px;
-  color: #94a3b8;
-  margin-top: 4px;
-  letter-spacing: 0.3px;
-}
-
-/* Stats Row */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.stat-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 14px 8px;
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  transition: transform 0.2s;
-}
-.stat-card:hover { transform: translateY(-2px); }
-.stat-card .num {
-  font-size: 22px;
-  font-weight: 800;
-  color: #1e293b;
-  line-height: 1.2;
-}
-.stat-card .label {
-  font-size: 11px;
-  color: #94a3b8;
-  margin-top: 2px;
-}
-.stat-card.accent .num { color: #d97706; }
-.stat-card.success .num { color: #16a34a; }
-
-/* ===================== Tab Bar ===================== */
-.tab-bar {
-  display: flex;
-  gap: 4px;
-  background: #fff;
-  border-radius: 14px;
-  padding: 4px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.tab-btn {
-  flex: 1;
-  padding: 10px 6px;
-  border: none;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  color: #94a3b8;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.25s;
-  white-space: nowrap;
-  position: relative;
-}
-.tab-btn:hover { color: #64748b; background: #f8f5f0; }
-.tab-btn.active {
-  color: #fff;
-  background: #1e293b;
-  box-shadow: 0 2px 8px rgba(30,41,59,0.15);
-}
-.tab-btn .badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  margin-left: 4px;
-  vertical-align: middle;
-}
-.tab-btn.active .badge { background: #fca5a5; color: #7f1d1d; }
-
-/* ===================== Mode Pills ===================== */
-.mode-pills {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-.pill-btn {
-  padding: 6px 16px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  background: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  font-family: inherit;
-  color: #94a3b8;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.pill-btn:hover { border-color: #cbd5e1; color: #64748b; }
-.pill-btn.active {
-  border-color: #1e293b;
-  background: #1e293b;
-  color: #fff;
-}
-
-/* ===================== Chapter / Section ===================== */
-#chapterSection {
-  display: none;
-  margin-bottom: 16px;
-}
-.chapter-panel, .section-panel {
-  background: #fff;
-  border-radius: 14px;
-  padding: 12px 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.chapter-panel { margin-bottom: 8px; }
-.chip-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.chip {
-  padding: 5px 14px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 16px;
-  background: transparent;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: inherit;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.chip:hover { border-color: #cbd5e1; background: #f8f5f0; }
-.chip.active { border-color: #d97706; background: #fffbeb; color: #92400e; }
-.chip.active-all { border-color: #1e293b; background: #1e293b; color: #fff; }
-.chip.part-label {
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 11px;
-  font-weight: 700;
-  color: #94a3b8;
-  padding: 6px 2px 2px;
-  cursor: default;
-  pointer-events: none;
-}
-
-/* ===================== Progress ===================== */
-.progress-wrap {
-  height: 4px;
-  background: #e2e8f0;
-  border-radius: 2px;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #d97706, #f59e0b);
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-
-/* ===================== Question Card ===================== */
-.q-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.02);
-  margin-bottom: 16px;
-}
-.q-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.q-number {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 12px;
-  border-radius: 10px;
-  background: #f1f5f9;
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
-}
-.q-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-  background: #e2e8f0;
-  color: #64748b;
-}
-.q-tag.multi { background: #fef3c7; color: #92400e; }
-.q-tag.case { background: #dbeafe; color: #1e40af; }
-.q-chapter {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-  background: #ede9fe;
-  color: #5b21b6;
-}
-.q-text {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.8;
-  margin-bottom: 20px;
-}
-.q-text p { margin-bottom: 6px; }
-.q-text p:last-child { margin-bottom: 0; }
-
-/* ===================== Options ===================== */
-.options { display: flex; flex-direction: column; gap: 10px; }
-.opt {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 15px;
-  line-height: 1.6;
-  user-select: none;
-}
-.opt:hover { border-color: #cbd5e1; background: #fafaf9; }
-.opt.selected {
-  border-color: #1e293b;
-  background: #f0f4ff;
-}
-.opt.correct {
-  border-color: #16a34a;
-  background: #f0fdf4;
-  pointer-events: none;
-}
-.opt.wrong {
-  border-color: #ef4444;
-  background: #fef2f2;
-  pointer-events: none;
-}
-.opt.reveal-correct {
-  border-color: #16a34a;
-  background: #f0fdf4;
-  pointer-events: none;
-}
-.opt .letter {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  background: #f1f5f9;
-  color: #64748b;
-  transition: all 0.2s;
-}
-.opt.selected .letter { background: #1e293b; color: #fff; }
-.opt.correct .letter { background: #16a34a; color: #fff; }
-.opt.wrong .letter { background: #ef4444; color: #fff; }
-.opt.reveal-correct .letter { background: #16a34a; color: #fff; }
-.opt .opt-text { flex: 1; min-width: 0; }
-.opt .opt-text p { margin: 0; }
-
-/* ===================== Explanation ===================== */
-.explanation {
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  display: none;
-}
-.explanation.show { display: block; animation: fadeUp 0.3s ease; }
-.explanation .label {
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* ===================== Action Bar ===================== */
-.action-bar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn:active { transform: scale(0.97); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-.btn-primary { background: #1e293b; color: #fff; }
-.btn-primary:hover:not(:disabled) { background: #334155; }
-.btn-success { background: #16a34a; color: #fff; }
-.btn-success:hover:not(:disabled) { background: #15803d; }
-.btn-outline { background: transparent; color: #64748b; border: 1.5px solid #e2e8f0; }
-.btn-outline:hover:not(:disabled) { border-color: #94a3b8; color: #1e293b; }
-.btn-ghost { background: transparent; color: #94a3b8; padding: 10px 12px; }
-.btn-ghost:hover:not(:disabled) { color: #ef4444; background: #fef2f2; }
-.btn-sm { padding: 8px 14px; font-size: 12px; }
-.btn-spacer { flex: 1; }
-
-/* ===================== Empty State ===================== */
-.empty-state {
-  text-align: center;
-  padding: 48px 20px;
-  color: #94a3b8;
-}
-.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state p { font-size: 14px; }
-
-/* ===================== Responsive ===================== */
-@media (max-width: 640px) {
-  .app-wrap { padding: 16px 12px 32px; }
-  .app-header { padding: 24px 0 20px; }
-  .app-header h1 { font-size: 22px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .q-card { padding: 18px; border-radius: 14px; }
-  .q-text { font-size: 15px; }
-  .opt { padding: 12px 14px; font-size: 14px; }
-  .action-bar { gap: 6px; }
-  .btn { padding: 8px 14px; font-size: 12px; }
-  .tab-btn { font-size: 12px; padding: 8px 4px; }
-  .stat-card { padding: 10px 6px; }
-  .stat-card .num { font-size: 18px; }
-}
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-/* ===================== Login Modal ===================== */
-.login-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15,23,42,0.6);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.login-modal {
-  background: #fff;
-  border-radius: 20px;
-  padding: 40px 36px 32px;
-  max-width: 380px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  animation: slideUp 0.35s ease;
-}
-@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-.login-modal .avatar {
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, #1e293b, #334155);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 28px;
-}
-.login-modal h2 { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
-.login-modal p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
-.login-modal input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 15px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
-.login-modal input:focus { border-color: #1e293b; }
-.login-modal .login-btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  background: #1e293b;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.2s;
-}
-.login-modal .login-btn:hover { background: #334155; }
-.login-modal .user-list {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
-}
-.login-modal .user-list p { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-.login-modal .user-btn {
-  display: inline-block;
-  padding: 6px 14px;
-  margin: 4px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  background: #fff;
-  font-size: 13px;
-  font-family: inherit;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.login-modal .user-btn:hover { border-color: #1e293b; background: #f8fafc; }
-
-/* User badge */
-.user-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px 4px 10px;
-  background: #fff;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #1e293b;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  font-family: inherit;
-  position: relative;
-}
-.user-badge:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.user-badge .dot {
-  width: 8px; height: 8px;
-  background: #16a34a;
-  border-radius: 50%;
-}
-.user-dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 6px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  padding: 6px;
-  min-width: 120px;
-  z-index: 100;
-}
-.user-dropdown.show { display: block; }
-.user-dropdown button {
-  display: block;
-  width: 100%;
-  padding: 8px 14px;
-  border: none;
-  background: transparent;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-  color: #475569;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s;
-}
-.user-dropdown button:hover { background: #f8fafc; }
-.user-dropdown .logout-btn { color: #ef4444; }
-.user-dropdown .logout-btn:hover { background: #fef2f2; }
-
-
-/* ===================== Login Modal ===================== */
-.login-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15,23,42,0.6);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.login-modal {
-  background: #fff;
-  border-radius: 20px;
-  padding: 40px 36px 32px;
-  max-width: 380px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  animation: slideUp 0.35s ease;
-}
-@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-.login-modal .avatar {
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, #1e293b, #334155);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 28px;
-}
-.login-modal h2 { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
-.login-modal p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
-.login-modal input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 15px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
-.login-modal input:focus { border-color: #1e293b; }
-.login-modal .login-btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  background: #1e293b;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.2s;
-}
-.login-modal .login-btn:hover { background: #334155; }
-.login-modal .user-list {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
-}
-.login-modal .user-list p { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-.login-modal .user-btn {
-  display: inline-block;
-  padding: 6px 14px;
-  margin: 4px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  background: #fff;
-  font-size: 13px;
-  font-family: inherit;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.login-modal .user-btn:hover { border-color: #1e293b; background: #f8fafc; }
-
-/* User badge */
-.user-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px 4px 10px;
-  background: #fff;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #1e293b;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  font-family: inherit;
-  position: relative;
-}
-.user-badge:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.user-badge .dot {
-  width: 8px; height: 8px;
-  background: #16a34a;
-  border-radius: 50%;
-}
-.user-dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 6px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  padding: 6px;
-  min-width: 120px;
-  z-index: 100;
-}
-.user-dropdown.show { display: block; }
-.user-dropdown button {
-  display: block;
-  width: 100%;
-  padding: 8px 14px;
-  border: none;
-  background: transparent;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-  color: #475569;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s;
-}
-.user-dropdown button:hover { background: #f8fafc; }
-.user-dropdown .logout-btn { color: #ef4444; }
-.user-dropdown .logout-btn:hover { background: #fef2f2; }
 
 </style>
 </head>
 <body>
-
 <div class="app-wrap">
-  <!-- Header -->
-  <header class="app-h<p>《经济基础知识》·《农业经济专业知识与实务》· 全真模拟刷题</p>
-    <div style=text-align:right;margin-top:12px;display:flex;justify-content:center;>
-      <div class=user-badge id=userBadge onclick=toggleUserMenu()>
-        <span class=dot></span>
-        <span id=userNameDisplay>未登录</span>
-        <span style=font-size:10px;color:#94a3b8;>▼</span>
-        <div class=user-dropdown id=userDropdown>
-          <button onclick=showLoginModal()>切换用户</button>
-          <button class=logout-btn onclick=logoutUser()>退出登录</button>
-        </div>
-      </div>
-    </div>
-  </header><!-- Login Modal -->
-<div class="login-overlay" id="loginOverlay" style="display:none;">
-  <div class="login-modal">
-    <div class="avatar">👤</div>
-    <h2>欢迎使用刷题工具</h2>
-    <p>请输入昵称开始刷题，不同用户互不干扰</p>
-    <input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20"
-      onkeydown="if(event.key==='Enter') doLogin()">
-    <button class="login-btn" onclick="doLogin()">开始刷题</button>
-    <div class="user-list" id="userList"></div>
-  </div>
+<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"></div><div class="user-section"><div class="user-badge" id="userBadge" onclick="toggleUserMenu()"><span class="dot"></span><span id="userNameDisplay">未登录</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg><div class="user-dropdown" id="userDropdown"><button onclick="showLoginModal()">切换用户</button><button class="logout-btn" onclick="logoutUser()">退出登录</button></div></div></div></header>
+<div class="stats-row anim-fade" style="animation-delay:0.1s"><div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div><div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div><div class="stat-card green"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div><div class="stat-card gold"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div></div>
+<div class="tab-bar anim-fade" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
+<div class="mode-pills anim-fade" style="animation-delay:0.2s" id="modePills"><button class="pill-btn active" data-mode="all">全部</button><button class="pill-btn" data-mode="single">单选题</button><button class="pill-btn" data-mode="multi">多选题</button></div>
+<div id="chapterSection"><div class="chapter-panel"><div class="chip-group" id="chapterBtns"></div></div><div class="section-panel" id="sectionBar" style="display:none"><div class="chip-group" id="sectionBtns"></div></div></div>
+<div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="q-card" id="questionCard"><div id="qContent"><div class="empty-state anim-fade"><div class="icon">&#x1F4D6;</div><p>欢迎使用中级经济师刷题工具，<br>选择模式开始练习吧!</p></div></div></div>
+<div class="action-bar"><button class="btn btn-outline btn-sm" id="prevBtn" disabled>&#x2190; 上一题</button><button class="btn btn-primary" id="submitBtn">提交答案</button><button class="btn btn-outline btn-sm" id="showAnsBtn">看答案</button><button class="btn btn-success btn-sm" id="nextBtn">下一题 &#x2192;</button><button class="btn btn-ghost btn-sm" id="resetBtn">&#x1F504; 重置</button></div>
 </div>
+<div class="login-overlay" id="loginOverlay" style="display:none"><div class="login-modal"><div class="avatar">&#x1F464;</div><h2>欢迎使用刷题工具</h2><p class="sub">请输入昵称开始刷题，不同用户互不干扰</p><input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20" onkeydown="if(event.key==='Enter')doLogin()"><button class="login-btn" onclick="doLogin()">开始刷题</button><div class="user-list" id="userList"></div></div></div>
 
-<!-- Login Modal -->
-<div class="login-overlay" id="loginOverlay" style="display:none;">
-  <div class="login-modal">
-    <div class="avatar">👤</div>
-    <h2>欢迎使用刷题工具</h2>
-    <p>请输入昵称开始刷题，不同用户互不干扰</p>
-    <input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20"
-      onkeydown="if(event.key==='Enter') doLogin()">
-    <button class="login-btn" onclick="doLogin()">开始刷题</button>
-    <div class="user-list" id="userList"></div>
-  </div>
-</div>
-
-
-  <!-- Stats -->
-  <div class="stats-row" id="statsRow">
-    <div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div>
-    <div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div>
-    <div class="stat-card success"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div>
-    <div class="stat-card accent"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div>
-  </div>
-
-  <!-- Tabs -->
-  <div class="tab-bar" id="tabBar">
-    <button class="tab-btn active" data-tab="practice">📝 练习模式</button>
-    <button class="tab-btn" data-tab="exam">🎯 模拟考试</button>
-    <button class="tab-btn" data-tab="chapter">📚 章节练习</button>
-    <button class="tab-btn" data-tab="wrong">❌ 错题集 <span class="badge" id="wrongBadge">0</span></button>
-  </div>
-
-  <!-- Mode Pills -->
-  <div class="mode-pills" id="modePills">
-    <button class="pill-btn active" data-mode="all">全部</button>
-    <button class="pill-btn" data-mode="single">单选题</button>
-    <button class="pill-btn" data-mode="multi">多选题</button>
-  </div>
-
-  <!-- Chapter/Section Selector -->
-  <div id="chapterSection">
-    <div class="chapter-panel"><div class="chip-group" id="chapterBtns"></div></div>
-    <div class="section-panel" id="sectionBar" style="display:none;"><div class="chip-group" id="sectionBtns"></div></div>
-  </div>
-
-  <!-- Progress -->
-  <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-
-  <!-- Question Card -->
-  <div class="q-card" id="questionCard">
-    <div id="qContent">
-      <div class="empty-state fade-in">
-        <div class="icon">📖</div>
-        <p>欢迎使用中级经济师刷题工具，<br>选择模式开始练习吧！</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Action Bar -->
-  <div class="action-bar">
-    <button class="btn btn-outline btn-sm" id="prevBtn" disabled>← 上一题</button>
-    <button class="btn btn-primary" id="submitBtn">提交答案</button>
-    <button class="btn btn-outline btn-sm" id="showAnsBtn">看答案</button>
-    <button class="btn btn-success btn-sm" id="nextBtn">下一题 →</button>
-    <button class="btn btn-ghost btn-sm" id="resetBtn">🔄 重置</button>
-  </div>
-</div>
-
-<!-- Load Questions -->
 <script src="questions.js"></script>
 
 <script>
@@ -1324,5 +689,4 @@ loadState();
 buildChapterButtons();
 render();
 </script>
-</body>
 </html>
