@@ -106,6 +106,34 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 .user-badge-simple{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;font-size:13px;font-weight:600;color:#cbd5e1;font-family:inherit}
 .user-badge-simple .dot{width:7px;height:7px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px rgba(34,197,94,0.5)}
 
+
+.rank-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;margin-left:8px;border:1px solid rgba(255,255,255,0.1);border-radius:100px;background:transparent;font-size:12px;font-weight:600;font-family:inherit;color:#64748b;cursor:pointer;transition:all 0.25s}
+.rank-btn:hover{border-color:rgba(255,255,255,0.2);color:#94a3b8}
+.rank-btn svg{width:14px;height:14px}
+.rank-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(16px);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease}
+.rank-modal{background:#1a1a2e;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:32px 28px;max-width:520px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.5);animation:slideDown 0.4s ease}
+.rank-modal h2{font-size:18px;font-weight:700;color:#f1f5f9;margin-bottom:4px;text-align:center}
+.rank-modal p.sub{font-size:12px;color:#64748b;margin-bottom:20px;text-align:center}
+.rank-table{width:100%;border-collapse:collapse}
+.rank-table th{padding:8px 10px;font-size:11px;font-weight:700;color:#475569;text-align:center;border-bottom:1px solid rgba(255,255,255,0.06);text-transform:uppercase;letter-spacing:0.5px}
+.rank-table td{padding:10px 10px;font-size:13px;color:#94a3b8;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03)}
+.rank-table tr:last-child td{border-bottom:none}
+.rank-table tr.current td{background:rgba(217,119,6,0.08);color:#fbbf24;border-radius:8px}
+.rank-table tr.current td:first-child{border-radius:8px 0 0 8px}
+.rank-table tr.current td:last-child{border-radius:0 8px 8px 0}
+.rank-table .rank-num{font-weight:800;font-size:14px}
+.rank-table .rank-1{color:#fbbf24}
+.rank-table .rank-2{color:#94a3b8}
+.rank-table .rank-3{color:#d97706}
+.rank-table .user-name{font-weight:600;color:#e2e8f0;text-align:left}
+.rank-table tr.current .user-name{color:#fbbf24}
+.rank-table .stat-num{font-weight:700;color:#e2e8f0;font-size:14px}
+.rank-table tr.current .stat-num{color:#fbbf24}
+.rank-table .you-badge{display:inline-block;padding:1px 8px;border-radius:6px;background:rgba(217,119,6,0.15);color:#fbbf24;font-size:10px;font-weight:700;margin-left:6px}
+.rank-empty{padding:32px;text-align:center;color:#64748b;font-size:13px}
+.rank-close{display:block;margin:20px auto 0;padding:10px 32px;border:none;border-radius:10px;background:rgba(255,255,255,0.06);color:#94a3b8;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.2s}
+.rank-close:hover{background:rgba(255,255,255,0.1);color:#e2e8f0}
+
 .login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(16px);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease}
 .login-modal{background:#1a1a2e;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:44px 40px 36px;max-width:400px;width:92%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.5);animation:slideDown 0.4s ease}
 .login-modal .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(217,119,6,0.25)}
@@ -147,7 +175,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 </head>
 <body>
 <div class="app-wrap">
-<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div></header>
+<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"><button class="rank-btn" onclick="showRanking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V10M12 20V4M18 20V14"/></svg>排行榜</button></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div></header>
 <div class="stats-row anim-fade" style="animation-delay:0.1s"><div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div><div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div><div class="stat-card green"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div><div class="stat-card gold"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div></div>
 <div class="tab-bar anim-fade" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
 <div class="mode-pills anim-fade" style="animation-delay:0.2s" id="modePills"><button class="pill-btn active" data-mode="all">全部</button><button class="pill-btn" data-mode="single">单选题</button><button class="pill-btn" data-mode="multi">多选题</button></div>
@@ -665,6 +693,63 @@ logoutUser = function() {
   try { sessionStorage.removeItem('examCurrentUser'); } catch(e) {}
 };
 
+
+
+function showRanking() {
+  var overlay = document.getElementById('rankOverlay');
+  var container = document.getElementById('rankContent');
+  var users = [];
+  try {
+    var savedUsers = JSON.parse(localStorage.getItem('examUsers') || '[]');
+    savedUsers.forEach(function(name) {
+      try {
+        var raw = localStorage.getItem('examState_' + name);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        var done = 0, correct = 0;
+        if (data.answeredState) {
+          for (var k in data.answeredState) {
+            var s = data.answeredState[k];
+            if (s.submitted) {
+              done++;
+              if (s.isCorrect) correct++;
+            }
+          }
+        }
+        users.push({name: name, done: done, correct: correct, rate: done > 0 ? Math.round(correct / done * 100) : 0});
+      } catch(e) {}
+    });
+  } catch(e) {}
+
+  // Sort by correct count desc, then rate desc
+  users.sort(function(a, b) {
+    if (a.correct !== b.correct) return b.correct - a.correct;
+    return b.rate - a.rate;
+  });
+
+  if (users.length === 0) {
+    container.innerHTML = '<div class="rank-empty">还没有用户数据，快去刷题吧!</div>';
+    overlay.style.display = 'flex';
+    return;
+  }
+
+  var html = '<table class="rank-table"><thead><tr><th>排名</th><th style="text-align:left">用户</th><th>已答题</th><th>正确数</th><th>正确率</th></tr></thead><tbody>';
+  var medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
+  var rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+  users.forEach(function(u, i) {
+    var rank = i + 1;
+    var isCurrentUser = currentUser && u.name === currentUser;
+    var cls = isCurrentUser ? 'current' : '';
+    var rankDisplay = i < 3 ? '<span class="rank-num ' + rankClasses[i] + '">' + medals[i] + '</span>' : '<span class="rank-num">' + rank + '</span>';
+    var nameDisplay = u.name + (isCurrentUser ? '<span class="you-badge">你</span>' : '');
+    html += '<tr class="' + cls + '"><td>' + rankDisplay + '</td><td class="user-name">' + nameDisplay + '</td><td><span class="stat-num">' + u.done + '</span></td><td><span class="stat-num">' + u.correct + '</span></td><td>' + u.rate + '%</td></tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+  overlay.style.display = 'flex';
+}
 
 // ==================== Init ====================
 loadState();
