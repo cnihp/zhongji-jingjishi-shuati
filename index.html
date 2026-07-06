@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>中级经济师 · 刷题工具</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800;900&amp;family=Noto+Serif+SC:wght@700;900&amp;display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;scroll-behavior:smooth}
@@ -172,12 +172,124 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 }
 
 </style>
+<style>
+:root{--paper:#f4f1ea;--paper-deep:#e7dfd2;--ink:#17201b;--muted:#66726a;--line:rgba(23,32,27,.13);--line-strong:rgba(23,32,27,.24);--panel:rgba(255,252,245,.82);--panel-solid:#fffaf0;--charcoal:#17201b;--jade:#0f766e;--jade-dark:#115e59;--gold:#b7791f;--red:#b42318;--green:#15803d;--shadow:0 24px 70px rgba(45,38,25,.14);--shadow-soft:0 12px 32px rgba(45,38,25,.1)}
+body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;background:var(--paper);color:var(--ink);line-height:1.62}
+body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgba(244,241,234,.78)),linear-gradient(90deg,rgba(23,32,27,.045) 1px,transparent 1px),linear-gradient(180deg,rgba(23,32,27,.04) 1px,transparent 1px);background-size:auto,44px 44px,44px 44px}
+::selection{background:rgba(15,118,110,.2);color:var(--ink)}
+.anim-fade,.fade-in{animation:fadeUp .48s cubic-bezier(.2,.8,.2,1) both}
+.app-wrap{width:min(1180px,calc(100% - 40px));max-width:none;margin:0 auto;padding:28px 0 64px}
+.app-header{display:grid;grid-template-columns:1fr auto;gap:20px 28px;align-items:end;text-align:left;padding:34px 0 28px;border-bottom:1px solid var(--line)}
+.app-header .logo{display:none}
+.app-header h1{font-family:'Noto Serif SC','Noto Sans SC',serif;font-size:clamp(30px,5vw,58px);font-weight:900;line-height:1.05;color:var(--ink);letter-spacing:0;margin:0;max-width:760px;background:none;-webkit-text-fill-color:currentColor}
+.app-header h1::before{content:'2026 STUDY CONSOLE';display:block;width:max-content;margin-bottom:16px;padding:6px 10px;border:1px solid var(--line-strong);border-radius:999px;font-family:'Noto Sans SC',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--jade);background:rgba(255,250,240,.72)}
+.app-header p{font-size:15px;color:var(--muted);max-width:680px;letter-spacing:0;margin:0}
+.app-header .glow-line{grid-column:2;grid-row:1 / span 2;width:auto;height:auto;margin:0;background:transparent;border-radius:0;display:flex;align-items:center;justify-content:flex-end}
+.user-section{grid-column:2;justify-content:flex-end;margin-top:0}
+.user-badge,.user-badge-simple{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:700;color:var(--charcoal);font-family:inherit;box-shadow:var(--shadow-soft)}
+.user-badge:hover,.user-badge-simple:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.user-badge .dot,.user-badge-simple .dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 4px rgba(21,128,61,.12)}
+.user-dropdown{background:var(--panel-solid);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
+.user-dropdown button{border-radius:6px;color:var(--muted)}
+.user-dropdown button:hover{background:rgba(15,118,110,.08);color:var(--jade-dark)}
+.stats-row{grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.stat-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 18px 16px;text-align:left;box-shadow:0 1px 0 rgba(255,255,255,.7) inset;backdrop-filter:blur(16px)}
+.stat-card::before{height:4px;background:linear-gradient(90deg,var(--charcoal),var(--jade));opacity:.86}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);border-color:var(--line-strong);background:var(--panel)}
+.stat-card .num{font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;color:var(--ink)}
+.stat-card .label{font-size:12px;color:var(--muted);margin-top:8px;font-weight:800;letter-spacing:.06em}
+.stat-card.gold::before{background:linear-gradient(90deg,var(--gold),#f5d28a)}
+.stat-card.gold .num{color:var(--gold);background:none;-webkit-text-fill-color:currentColor}
+.stat-card.green::before{background:linear-gradient(90deg,var(--green),#6ee7b7)}
+.stat-card.green .num{color:var(--green)}
+.tab-bar{gap:8px;background:rgba(255,250,240,.66);border:1px solid var(--line);border-radius:8px;padding:7px;margin-bottom:14px;box-shadow:var(--shadow-soft);backdrop-filter:blur(18px)}
+.tab-btn{border-radius:6px;font-size:14px;font-weight:800;color:var(--muted)}
+.tab-btn:hover{color:var(--ink);background:rgba(23,32,27,.05)}
+.tab-btn.active{color:#fff;background:var(--charcoal);box-shadow:0 12px 28px rgba(23,32,27,.18)}
+.tab-btn .badge{background:var(--red);font-weight:900}
+.mode-pills{align-items:center;gap:8px;margin-bottom:16px}
+.mode-pills::before{content:'TYPE';font-size:12px;font-weight:900;letter-spacing:.08em;color:var(--muted);margin-right:2px}
+.pill-btn,.chip{padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(255,250,240,.65);font-size:13px;font-weight:800;color:var(--muted)}
+.pill-btn:hover,.chip:hover{border-color:var(--line-strong);color:var(--ink);background:#fffaf0}
+.pill-btn.active,.chip.active{border-color:rgba(15,118,110,.38);background:rgba(15,118,110,.1);color:var(--jade-dark);box-shadow:0 10px 24px rgba(15,118,110,.08)}
+.chapter-panel,.section-panel{background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:8px;padding:14px;box-shadow:var(--shadow-soft)}
+.chip.active-all{border-color:var(--charcoal);background:var(--charcoal);color:#fff}
+.chip.part-label{border:none;background:transparent;font-size:12px;font-weight:900;color:var(--gold);letter-spacing:.05em}
+.progress-wrap{height:8px;background:rgba(23,32,27,.08);border-radius:999px;margin:20px 0 22px;border:1px solid rgba(23,32,27,.06)}
+.progress-fill{background:linear-gradient(90deg,var(--jade),var(--gold));border-radius:999px}
+.q-card{background:var(--charcoal);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:30px;margin-bottom:16px;box-shadow:0 32px 90px rgba(23,32,27,.23);color:#edf5ef}
+.q-card::before{height:5px;background:linear-gradient(90deg,var(--gold),var(--jade),#9fb6aa)}
+.q-meta{gap:8px;margin-bottom:18px}
+.q-number,.q-tag,.q-chapter{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:900}
+.q-number{background:rgba(255,255,255,.08);color:#d8e5dd}
+.q-tag,.q-tag.single{background:rgba(37,99,235,.16);color:#bfdbfe}
+.q-tag.multi{background:rgba(183,121,31,.2);color:#fde68a}
+.q-chapter{background:rgba(15,118,110,.2);color:#99f6e4}
+.q-text{font-size:18px;font-weight:600;line-height:1.92;color:#fff}
+.opt{gap:14px;padding:15px 16px;border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:15px;line-height:1.7;background:rgba(255,255,255,.045)}
+.opt:hover{border-color:rgba(245,210,138,.45);background:rgba(255,255,255,.075);transform:translateX(3px)}
+.opt.selected{border-color:rgba(245,210,138,.72);background:rgba(183,121,31,.14)}
+.opt.correct{border-color:rgba(74,222,128,.55);background:rgba(21,128,61,.16)}
+.opt.wrong{border-color:rgba(248,113,113,.55);background:rgba(180,35,24,.16)}
+.opt.reveal-correct{border-color:rgba(74,222,128,.38);background:rgba(21,128,61,.1)}
+.opt.correct,.opt.wrong,.opt.reveal-correct{pointer-events:auto}
+.opt .letter{width:32px;height:32px;border-radius:7px;font-weight:900;background:rgba(255,255,255,.1);color:#cbd5e1}
+.opt.selected .letter{background:var(--gold);color:#fff}
+.opt.correct .letter,.opt.reveal-correct .letter{background:var(--green);color:#fff}
+.opt.wrong .letter{background:var(--red);color:#fff}
+.opt .opt-text{color:#edf5ef}
+.explanation{border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+.explanation .label{font-weight:900;color:#fff}
+.explanation div:last-child{color:#cbd8d0;line-height:1.8}
+.action-bar{gap:10px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:8px;padding:10px;box-shadow:var(--shadow-soft);position:relative;backdrop-filter:blur(18px);z-index:20}
+.btn{border-radius:6px;font-weight:900;white-space:nowrap}
+.btn-primary{background:var(--charcoal);color:#fff;box-shadow:0 12px 28px rgba(23,32,27,.18)}
+.btn-primary:hover:not(:disabled){background:#26362d;transform:translateY(-1px)}
+.btn-success{background:var(--jade);color:#fff;box-shadow:0 12px 28px rgba(15,118,110,.2)}
+.btn-success:hover:not(:disabled){background:var(--jade-dark);transform:translateY(-1px)}
+.btn-outline{background:#fffaf0;color:var(--charcoal);border:1px solid var(--line-strong)}
+.btn-outline:hover:not(:disabled){border-color:var(--charcoal);background:#fff}
+.btn-ghost{color:var(--muted)}
+.btn-ghost:hover:not(:disabled){color:var(--red);background:rgba(180,35,24,.08)}
+.rank-btn{gap:7px;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(255,250,240,.78);font-size:13px;font-weight:900;color:var(--charcoal);box-shadow:var(--shadow-soft)}
+.rank-btn:hover{border-color:var(--charcoal);transform:translateY(-1px)}
+.rank-btn svg{width:16px;height:16px}
+.rank-overlay,.login-overlay{background:rgba(23,32,27,.58);backdrop-filter:blur(18px)}
+.rank-modal,.login-modal{background:var(--panel-solid);border:1px solid var(--line);border-radius:10px;box-shadow:0 28px 90px rgba(23,32,27,.28)}
+.rank-modal h2,.login-modal h2{font-weight:900;color:var(--ink)}
+.rank-modal p.sub,.login-modal p.sub{color:var(--muted)}
+.rank-table th{color:var(--muted);border-bottom:1px solid var(--line)}
+.rank-table td{color:var(--muted);border-bottom:1px solid rgba(23,32,27,.06)}
+.rank-table tr.current td{background:rgba(15,118,110,.08);color:var(--jade-dark)}
+.rank-table .rank-num,.rank-table .stat-num,.rank-table .user-name{color:var(--ink);font-weight:900}
+.rank-table .rank-1{color:var(--gold)}
+.rank-table .rank-2{color:#6b7280}
+.rank-table .rank-3{color:#92400e}
+.rank-table .you-badge{background:rgba(15,118,110,.12);color:var(--jade-dark);font-weight:900}
+.rank-empty{color:var(--muted)}
+.rank-close{border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--charcoal);font-weight:900}
+.login-modal .avatar{border-radius:18px;background:linear-gradient(135deg,var(--charcoal),var(--jade));box-shadow:0 16px 34px rgba(15,118,110,.22)}
+.login-modal input{background:#fff;border:1px solid var(--line);border-radius:7px;color:var(--ink)}
+.login-modal input:focus{border-color:var(--jade);box-shadow:0 0 0 4px rgba(15,118,110,.1)}
+.login-modal .login-btn{border-radius:7px;background:var(--charcoal);font-weight:900}
+.login-modal .login-btn:hover{background:var(--jade-dark)}
+.login-modal .user-list{border-top:1px solid var(--line)}
+.login-modal .user-btn{border:1px solid var(--line);color:var(--muted)}
+.login-modal .user-btn:hover{border-color:var(--jade);color:var(--jade-dark);background:rgba(15,118,110,.08)}
+.empty-state{color:#cbd8d0}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-thumb{background:rgba(23,32,27,.18);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(23,32,27,.28)}
+body>div[style*="text-align:center"]{border-top-color:rgba(23,32,27,.1)!important}
+body>div[style*="text-align:center"] a{color:rgba(23,32,27,.32)!important}
+@media(max-width:760px){.app-wrap{width:min(100% - 28px,1180px);padding:20px 0 44px}.app-header{grid-template-columns:1fr;gap:14px;padding:24px 0 22px}.app-header .glow-line,.user-section{grid-column:1;grid-row:auto;justify-content:flex-start}.app-header h1{font-size:34px}.app-header h1::before{font-size:11px;margin-bottom:12px}.stats-row{grid-template-columns:repeat(2,1fr);gap:10px}.stat-card{padding:15px}.stat-card .num{font-size:28px}.tab-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.tab-btn{font-size:13px;padding:12px 6px}.mode-pills{overflow-x:auto;padding-bottom:2px}.q-card{padding:22px 18px;border-radius:8px}.q-text{font-size:16px}.opt{padding:13px 12px;font-size:14px;gap:11px}.action-bar{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.btn{width:100%;padding:11px 10px;font-size:12px;min-height:44px}.btn-ghost{grid-column:1 / -1}.login-modal{padding:32px 24px 28px}}
+</style>
 </head>
 <body>
 <div class="app-wrap">
 <header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"><button class="rank-btn" onclick="showRanking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V10M12 20V4M18 20V14"/></svg>排行榜</button></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div></header>
 <div class="stats-row anim-fade" style="animation-delay:0.1s"><div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div><div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div><div class="stat-card green"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div><div class="stat-card gold"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div></div>
-<div class="tab-bar anim-fade" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
+<div class="tab-bar anim-fade" id="tabBar" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
 <div class="mode-pills anim-fade" style="animation-delay:0.2s" id="modePills"><button class="pill-btn active" data-mode="all">全部</button><button class="pill-btn" data-mode="single">单选题</button><button class="pill-btn" data-mode="multi">多选题</button></div>
 <div id="chapterSection"><div class="chapter-panel"><div class="chip-group" id="chapterBtns"></div></div><div class="section-panel" id="sectionBar" style="display:none"><div class="chip-group" id="sectionBtns"></div></div></div>
 <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -206,6 +318,144 @@ function getTypeLabel(q) {
   if (q.type === 'single') return '单选';
   if (q.type === 'multi') return '多选';
   return q.type;
+}
+
+function normalizeAnswer(q) {
+  return Array.isArray(q.answer) ? q.answer : [q.answer];
+}
+
+function stripHtml(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html || '';
+  return div.textContent.replace(/\s+/g, ' ').trim();
+}
+
+function getCorrectStr(q) {
+  return normalizeAnswer(q).map(i => letters[i]).join('、');
+}
+
+const textbookNotes = [
+  {
+    match: q => q.chapter && q.chapter.includes('市场需求、供给与均衡价格') && q.section && q.section.includes('市场需求'),
+    summary: '课本中“需求”是指在一定时间内和一定价格条件下，消费者对某种商品或服务愿意而且能够购买的数量。需求必须同时具备两个条件：购买欲望和支付能力，只有想买但没有支付能力，不能形成有效需求。',
+    explain(q, correctAnswer) {
+      const questionText = stripHtml(q.text);
+      const lines = [];
+      if (questionText.includes('需求量')) {
+        lines.push('课本区分“需求”和“需求量”：在其他条件不变时，商品自身价格变化引起的是需求量沿着需求曲线变动；收入、偏好、相关商品价格、预期等因素变化，通常引起需求曲线移动。');
+      }
+      correctAnswer.forEach(i => {
+        const optionText = stripHtml(q.options[i]);
+        if (optionText.includes('价格越来越便宜') || optionText.includes('价格下降') || optionText.includes('价格上升')) {
+          lines.push(letters[i] + '项说的是商品自身价格变化。按照需求规律，一般情况下价格下降，消费者愿意且能够购买的数量增加，因此会影响需求量。');
+        } else if (optionText.includes('支付能力')) {
+          lines.push(letters[i] + '项错误。课本定义中的“能够购买”就是强调支付能力；没有支付能力，即使有购买愿望，也不能形成有效需求。');
+        } else if (optionText.includes('消费欲望')) {
+          lines.push(letters[i] + '项错误。消费欲望只对应“愿意购买”，还缺少“能够购买”这个条件；课本中的需求必须同时有购买欲望和支付能力。');
+        } else if (optionText.includes('需要')) {
+          lines.push(letters[i] + '项错误。通常说的“需要”只是主观愿望或生活需要，不等同于经济学上的需求；课本中的需求是愿意购买且能够购买的数量。');
+        } else if (optionText.includes('市场需求')) {
+          lines.push(letters[i] + '项符合课本表述：市场需求是在一定时间、一定价格条件下，所有消费者对某种商品或服务需求的总和。');
+        } else {
+          lines.push(letters[i] + '项符合本节关于需求含义或需求影响因素的课本表述。');
+        }
+      });
+      return lines;
+    }
+  },
+  {
+    match: q => q.chapter && q.chapter.includes('市场需求、供给与均衡价格') && q.section && q.section.includes('市场供给'),
+    summary: '课本中“供给”是指生产者在一定时间内、在一定价格条件下愿意并且能够提供的某种商品或服务的数量。供给同样必须同时具备供给意愿和供给能力。',
+    explain(q, correctAnswer) {
+      const lines = [];
+      correctAnswer.forEach(i => {
+        const optionText = stripHtml(q.options[i]);
+        if (optionText.includes('价格')) {
+          lines.push(letters[i] + '项涉及商品自身价格。一般情况下，价格提高会增加生产者供给意愿，供给量增加；价格下降则供给量减少。');
+        } else if (optionText.includes('成本') || optionText.includes('技术') || optionText.includes('预期')) {
+          lines.push(letters[i] + '项属于影响供给的重要因素。生产成本、生产技术、生产者预期等变化会使供给曲线发生移动。');
+        } else {
+          lines.push(letters[i] + '项符合课本关于供给含义或供给影响因素的表述。');
+        }
+      });
+      return lines;
+    }
+  },
+  {
+    match: q => q.chapter && q.chapter.includes('市场需求、供给与均衡价格') && q.section && q.section.includes('均衡价格'),
+    summary: '课本中“均衡价格”是市场需求量和供给量相等时的价格；与之对应的数量称为均衡数量。需求或供给发生变化，会通过曲线移动影响均衡价格和均衡数量。',
+    explain(q, correctAnswer) {
+      return correctAnswer.map(i => {
+        const optionText = stripHtml(q.options[i]);
+        if (optionText.includes('需求') && optionText.includes('供给')) {
+          return letters[i] + '项把握了均衡价格的核心：均衡状态由需求和供给共同决定，而不是单方面决定。';
+        }
+        return letters[i] + '项符合课本关于均衡价格、均衡数量或需求供给变动影响的表述。';
+      });
+    }
+  },
+  {
+    match: q => q.chapter && q.chapter.includes('市场需求、供给与均衡价格') && q.section && q.section.includes('弹性'),
+    summary: '弹性反映一个经济变量相对变动对另一个经济变量相对变动的反应程度。需求价格弹性通常用需求量变动百分比除以价格变动百分比来衡量。',
+    explain(q, correctAnswer) {
+      return correctAnswer.map(i => {
+        const optionText = stripHtml(q.options[i]);
+        if (optionText.includes('百分比') || optionText.includes('变动')) {
+          return letters[i] + '项符合弹性的课本定义：弹性比较的是相对变动，即变动百分比之间的关系。';
+        }
+        if (optionText.includes('替代') || optionText.includes('必需') || optionText.includes('时间')) {
+          return letters[i] + '项属于课本列举的影响需求价格弹性的因素，如替代品数量和相近程度、商品重要性、用途多少、时间长短等。';
+        }
+        return letters[i] + '项符合课本关于弹性含义、计算或影响因素的表述。';
+      });
+    }
+  }
+];
+
+function getTextbookNote(q) {
+  return textbookNotes.find(item => item.match(q));
+}
+
+function gradeSelection(q, selected) {
+  const sortedSelected = [...selected].sort();
+  const sortedCorrect = normalizeAnswer(q).sort();
+  if (q.type === 'single') {
+    return sortedSelected.length === 1 && sortedCorrect.length === 1 && sortedSelected[0] === sortedCorrect[0];
+  }
+  return sortedSelected.length === sortedCorrect.length &&
+    sortedSelected.every((v, i) => v === sortedCorrect[i]);
+}
+
+function buildExplanation(q) {
+  if (q.explanation && stripHtml(q.explanation)) return q.explanation;
+  const correctAnswer = normalizeAnswer(q);
+  const correctStr = getCorrectStr(q);
+  const correctText = correctAnswer
+    .map(i => letters[i] + '：' + stripHtml(q.options[i]))
+    .join('；');
+  const topic = [q.chapter, q.section].filter(Boolean).join(' · ');
+  const note = getTextbookNote(q);
+  if (note) {
+    const detailLines = note.explain(q, correctAnswer);
+    return '<p>本题考查' + (topic ? '“' + topic + '”' : '相关知识点') + '。</p>' +
+      '<p>' + note.summary + '</p>' +
+      '<p>正确答案为 ' + correctStr + '，对应选项是：' + correctText + '。</p>' +
+      detailLines.map(line => '<p>' + line + '</p>').join('');
+  }
+  return '<p>本题考查' + (topic ? '“' + topic + '”' : '相关知识点') + '。</p>' +
+    '<p>正确答案为 ' + correctStr + '，对应选项是：' + correctText + '。</p>' +
+    '<p>该题库当前没有录入本节的课本解析。为避免生成没有依据的套话，这里只展示答案；后续可以按章节继续补充课本知识点解析。</p>';
+}
+
+function applyAnswer(q, selected) {
+  if (!answeredState[q.id]) answeredState[q.id] = { selected: [], submitted: false, isCorrect: false };
+  const state = answeredState[q.id];
+  state.selected = [...selected];
+  state.submitted = true;
+  state.isCorrect = gradeSelection(q, state.selected);
+  if (!state.isCorrect && currentTab !== 'wrong') wrongSet.add(q.id);
+  else if (state.isCorrect) wrongSet.delete(q.id);
+  saveState();
 }
 
 function getFilteredQuestions() {
@@ -315,14 +565,13 @@ function render() {
 
   // Explanation
   if (submitted) {
-    const correctAnswer = Array.isArray(q.answer) ? q.answer : [q.answer];
-    const correctStr = correctAnswer.map(i => letters[i]).join(', ');
+    const correctStr = getCorrectStr(q);
     const isCorrect = state.isCorrect;
     html += '<div class="explanation show">';
     html += '<div class="label">' +
       (isCorrect ? '✅ 回答正确' : '❌ 回答错误') +
       ' · 正确答案：' + correctStr + '</div>';
-    if (q.explanation) html += '<div>' + q.explanation + '</div>';
+    html += '<div>' + buildExplanation(q) + '</div>';
     html += '</div>';
   } else {
     html += '<div class="explanation" id="explBox"></div>';
@@ -337,14 +586,14 @@ function render() {
 
   const subBtn = document.getElementById('submitBtn');
   const showBtn = document.getElementById('showAnsBtn');
-  subBtn.disabled = submitted;
-  if (submitted) subBtn.textContent = '✅ 已提交';
-  else subBtn.textContent = (q.type === 'multi') ? '📋 提交答案' : '📋 提交答案';
+  subBtn.disabled = submitted && q.type !== 'multi';
+  if (submitted) subBtn.textContent = q.type === 'multi' ? '✅ 实时判题中' : '✅ 已判题';
+  else subBtn.textContent = '📋 提交答案';
 
   // Option click handlers
   document.querySelectorAll('.opt').forEach(el => {
     el.addEventListener('click', function() {
-      if (submitted) return;
+      if (submitted && q.type !== 'multi') return;
       const idx = parseInt(this.dataset.optidx);
       const qs2 = getFilteredQuestions();
       if (qs2.length === 0) return;
@@ -352,13 +601,14 @@ function render() {
       if (!answeredState[q2.id]) answeredState[q2.id] = { selected: [], submitted: false, isCorrect: false };
       const st = answeredState[q2.id];
       if (q2.type === 'single') {
-        st.selected = [idx];
+        applyAnswer(q2, [idx]);
       } else {
+        const nextSelected = [...st.selected];
         const pos = st.selected.indexOf(idx);
-        if (pos >= 0) st.selected.splice(pos, 1);
-        else st.selected.push(idx);
+        if (pos >= 0) nextSelected.splice(pos, 1);
+        else nextSelected.push(idx);
+        applyAnswer(q2, nextSelected);
       }
-      saveState();
       render();
     });
   });
@@ -379,21 +629,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
     // Hint: select at least one option
     return;
   }
-  state.submitted = true;
-  const correctAnswer = Array.isArray(q.answer) ? q.answer : [q.answer];
-  const sortedSelected = [...state.selected].sort();
-  const sortedCorrect = [...correctAnswer].sort();
-  let isCorrect = false;
-  if (q.type === 'single') {
-    isCorrect = sortedSelected.length === 1 && sortedCorrect.length === 1 && sortedSelected[0] === sortedCorrect[0];
-  } else {
-    isCorrect = sortedSelected.length === sortedCorrect.length &&
-      sortedSelected.every((v, i) => v === sortedCorrect[i]);
-  }
-  state.isCorrect = isCorrect;
-  if (!isCorrect && currentTab !== 'wrong') wrongSet.add(q.id);
-  else if (isCorrect) wrongSet.delete(q.id);
-  saveState();
+  applyAnswer(q, state.selected);
   render();
 });
 
@@ -402,8 +638,8 @@ document.getElementById('showAnsBtn').addEventListener('click', function() {
   const qs = getFilteredQuestions();
   if (qs.length === 0) return;
   const q = qs[currentIndex];
-  const correctAnswer = Array.isArray(q.answer) ? q.answer : [q.answer];
-  const correctStr = correctAnswer.map(i => letters[i]).join(', ');
+  const correctAnswer = normalizeAnswer(q);
+  const correctStr = getCorrectStr(q);
 
   // Select the correct answers
   if (!answeredState[q.id]) {
@@ -420,24 +656,12 @@ document.getElementById('showAnsBtn').addEventListener('click', function() {
   if (explBox) {
     explBox.classList.add('show');
     explBox.innerHTML = '<div class="label">📝 参考答案：' + correctStr + '</div>' +
-      (q.explanation ? '<div>' + q.explanation + '</div>' : '');
+      '<div>' + buildExplanation(q) + '</div>';
   }
 
   // Also reveal options visually (by re-rendering with submitted=true on the state)
   const st = answeredState[q.id];
-  st.submitted = true;
-  const correctAnswer2 = Array.isArray(q.answer) ? q.answer : [q.answer];
-  const sortedSelected = [...st.selected].sort();
-  const sortedCorrect = [...correctAnswer2].sort();
-  let isCorrect = false;
-  if (q.type === 'single') {
-    isCorrect = sortedSelected.length === 1 && sortedCorrect.length === 1 && sortedSelected[0] === sortedCorrect[0];
-  } else {
-    isCorrect = sortedSelected.length === sortedCorrect.length &&
-      sortedSelected.every((v, i) => v === sortedCorrect[i]);
-  }
-  st.isCorrect = isCorrect;
-  saveState();
+  applyAnswer(q, st.selected);
   render();
 });
 
@@ -478,16 +702,16 @@ function chToNum(s) { const m = s.match(/[零一二三四五六七八九十]+/);
     return a.localeCompare(b);
   });
 
-  let html = "<button class=\"chip active-all\" data-chapter=\"all\">\U0001f4c2 全部章节</button>";
+  let html = "<button class=\"chip active-all\" data-chapter=\"all\">&#x1F4C2; 全部章节</button>";
   chList.forEach(ch => {
     const num = chToNum(ch);
-    if (num === 1) html += "<button class=\"chip part-label\">\U0001f4ca 经济学基础（第1-10章）</button>";
-    else if (num === 11) html += "<button class=\"chip part-label\">\U0001f4b0 财政（第11-16章）</button>";
-    else if (num === 17) html += "<button class=\"chip part-label\">\U0001f3e6 货币与金融（第17-22章）</button>";
-    else if (num === 23) html += "<button class=\"chip part-label\">\U0001f4c8 统计（第23-27章）</button>";
-    else if (num === 28) html += "<button class=\"chip part-label\">\U0001f4cb 会计（第28-32章）</button>";
+    if (num === 1) html += "<button class=\"chip part-label\">&#x1F4CA; 经济学基础（第1-10章）</button>";
+    else if (num === 11) html += "<button class=\"chip part-label\">&#x1F4B0; 财政（第11-16章）</button>";
+    else if (num === 17) html += "<button class=\"chip part-label\">&#x1F3E6; 货币与金融（第17-22章）</button>";
+    else if (num === 23) html += "<button class=\"chip part-label\">&#x1F4C8; 统计（第23-27章）</button>";
+    else if (num === 28) html += "<button class=\"chip part-label\">&#x1F4CB; 会计（第28-32章）</button>";
     else if (num === 33) html += "<button class=\"chip part-label\">\u2696\ufe0f 法律（第33-37章）</button>";
-    else if (num === 99) html += "<button class=\"chip part-label\">\U0001f4dd 模拟试卷</button>";
+    else if (num === 99) html += "<button class=\"chip part-label\">&#x1F4DD; 模拟试卷</button>";
     html += "<button class=\"chip\" data-chapter=\"" + ch.replace(/'/g, "\\'") + "\">" + ch + "</button>";
   });
 
