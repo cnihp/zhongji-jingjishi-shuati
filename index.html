@@ -674,9 +674,9 @@ function render() {
 
   const subBtn = document.getElementById('submitBtn');
   const showBtn = document.getElementById('showAnsBtn');
-  subBtn.disabled = submitted && q.type !== 'multi';
-  if (submitted) subBtn.textContent = q.type === 'multi' ? '✅ 实时判题中' : '✅ 已判题';
-  else subBtn.textContent = '📋 提交答案';
+  subBtn.disabled = submitted;
+  if (submitted) subBtn.textContent = '✅ 已判题';
+  else subBtn.textContent = q.type === 'multi' ? '📋 提交多选答案' : '📋 提交答案';
 
   // Option click handlers
   document.querySelectorAll('.opt').forEach(el => {
@@ -695,7 +695,10 @@ function render() {
         const pos = st.selected.indexOf(idx);
         if (pos >= 0) nextSelected.splice(pos, 1);
         else nextSelected.push(idx);
-        applyAnswer(q2, nextSelected);
+        st.selected = nextSelected;
+        st.submitted = false;
+        st.isCorrect = false;
+        saveState();
       }
       render();
     });
