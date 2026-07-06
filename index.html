@@ -312,6 +312,8 @@ let currentIndex = 0;
 let answeredState = {};
 let wrongSet = new Set();
 const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+const CLOUD_SYNC_API = '';
+let cloudSaveTimer = null;
 
 // ==================== Helpers ====================
 function getTypeLabel(q) {
@@ -544,6 +546,62 @@ function applyAnswer(q, selected) {
   if (!state.isCorrect && currentTab !== 'wrong') wrongSet.add(q.id);
   else if (state.isCorrect) wrongSet.delete(q.id);
   saveState();
+}
+
+function getCloudSyncApi() {
+  const api = (localStorage.getItem('cloudSyncApi') || CLOUD_SYNC_API || '').trim();
+  return api.replace(/\/+$/, '');
+}
+
+function getStatePayload() {
+  return { answeredState, wrongSet: [...wrongSet] };
+}
+
+function applyStatePayload(data) {
+  if (!data) return;
+  if (data.answeredState) answeredState = data.answeredState;
+  if (data.wrongSet) wrongSet = new Set(data.wrongSet);
+}
+
+function scheduleCloudSave() {
+  const api = getCloudSyncApi();
+  if (!api || !currentUser) return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(function() {
+    pushCloudState();
+  }, 800);
+}
+
+async function pullCloudState() {
+  const api = getCloudSyncApi();
+  if (!api || !currentUser) return false;
+  try {
+    const res = await fetch(api + '/state?user=' + encodeURIComponent(currentUser));
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (data && data.ok && data.state) {
+      applyStatePayload(data.state);
+      try { localStorage.setItem(getStorageKey(), JSON.stringify(getStatePayload())); } catch(e) {}
+      render();
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function pushCloudState() {
+  const api = getCloudSyncApi();
+  if (!api || !currentUser) return false;
+  try {
+    const res = await fetch(api + '/state', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ user: currentUser, state: getStatePayload() }),
+    });
+    return res.ok;
+  } catch(e) {
+    return false;
+  }
 }
 
 function getFilteredQuestions() {
@@ -966,8 +1024,9 @@ const _origLoadState = loadState;
 
 saveState = function() {
   if (!currentUser) return;
-  const data = { answeredState, wrongSet: [...wrongSet] };
+  const data = getStatePayload();
   try { localStorage.setItem(getStorageKey(), JSON.stringify(data)); } catch(e) {}
+  scheduleCloudSave();
 };
 
 loadState = function() {
@@ -999,6 +1058,7 @@ const _origLoginAs = loginAs;
 loginAs = function(name) {
   _origLoginAs(name);
   try { sessionStorage.setItem('examCurrentUser', name); } catch(e) {}
+  pullCloudState();
 };
 
 // And clear from session on logout
