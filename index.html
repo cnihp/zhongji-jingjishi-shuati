@@ -555,13 +555,24 @@ function getCloudSyncApi() {
 }
 
 function getStatePayload() {
-  return { answeredState, wrongSet: [...wrongSet] };
+  return { answeredState, wrongSet: [...wrongSet], currentIndex };
 }
 
 function applyStatePayload(data) {
   if (!data) return;
   if (data.answeredState) answeredState = data.answeredState;
   if (data.wrongSet) wrongSet = new Set(data.wrongSet);
+  if (Number.isInteger(data.currentIndex)) currentIndex = data.currentIndex;
+  else currentIndex = getFirstUnansweredIndex();
+}
+
+function getFirstUnansweredIndex() {
+  const qs = getFilteredQuestions();
+  const idx = qs.findIndex(q => {
+    const state = answeredState[q.id];
+    return !state || !state.submitted;
+  });
+  return idx >= 0 ? idx : 0;
 }
 
 function scheduleCloudSave() {
@@ -822,11 +833,11 @@ document.getElementById('showAnsBtn').addEventListener('click', function() {
 
 // Prev / Next
 document.getElementById('prevBtn').addEventListener('click', function() {
-  if (currentIndex > 0) { currentIndex--; render(); }
+  if (currentIndex > 0) { currentIndex--; saveState(); render(); }
 });
 document.getElementById('nextBtn').addEventListener('click', function() {
   const qs = getFilteredQuestions();
-  if (currentIndex < qs.length - 1) { currentIndex++; render(); }
+  if (currentIndex < qs.length - 1) { currentIndex++; saveState(); render(); }
 });
 
 // Reset
@@ -879,6 +890,7 @@ function chToNum(s) { const m = s.match(/[零一二三四五六七八九十]+/);
       currentSection = "all";
       currentIndex = 0;
       buildSectionButtons(currentChapter);
+      saveState();
       render();
     });
   });
@@ -902,6 +914,7 @@ function buildSectionButtons(chapterName) {
       this.classList.add('active');
       currentSection = this.dataset.section;
       currentIndex = 0;
+      saveState();
       render();
     });
   });
@@ -933,6 +946,7 @@ document.getElementById('tabBar').querySelectorAll('.tab-btn').forEach(btn => {
       modePills.style.display = 'none';
     }
 
+    saveState();
     render();
   });
 });
@@ -945,6 +959,7 @@ document.getElementById('modePills').querySelectorAll('.pill-btn').forEach(btn =
     this.classList.add('active');
     currentFilter = this.dataset.mode;
     currentIndex = 0;
+    saveState();
     render();
   });
 });
@@ -954,10 +969,10 @@ document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === 'ArrowLeft' || e.key === 'a') {
     const btn = document.getElementById('prevBtn');
-    if (!btn.disabled) { currentIndex--; render(); }
+    if (!btn.disabled) { currentIndex--; saveState(); render(); }
   } else if (e.key === 'ArrowRight' || e.key === 'd') {
     const btn = document.getElementById('nextBtn');
-    if (!btn.disabled) { currentIndex++; render(); }
+    if (!btn.disabled) { currentIndex++; saveState(); render(); }
   } else if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
@@ -1047,13 +1062,13 @@ saveState = function() {
 loadState = function() {
   answeredState = {};
   wrongSet = new Set();
+  currentIndex = 0;
   if (!currentUser) return;
   try {
     const raw = localStorage.getItem(getStorageKey());
     if (!raw) return;
     const data = JSON.parse(raw);
-    if (data.answeredState) answeredState = data.answeredState;
-    if (data.wrongSet) wrongSet = new Set(data.wrongSet);
+    applyStatePayload(data);
   } catch(e) {}
 };
 
