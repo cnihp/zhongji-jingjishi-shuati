@@ -312,8 +312,9 @@ let currentIndex = 0;
 let answeredState = {};
 let wrongSet = new Set();
 const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-const CLOUD_SYNC_API = '';
+const CLOUD_SYNC_API = 'https://zhongji-jingjishi-shuati-sync.cnihp.workers.dev';
 let cloudSaveTimer = null;
+let lastCloudSavePromise = null;
 
 // ==================== Helpers ====================
 function getTypeLabel(q) {
@@ -567,9 +568,14 @@ function scheduleCloudSave() {
   const api = getCloudSyncApi();
   if (!api || !currentUser) return;
   clearTimeout(cloudSaveTimer);
-  cloudSaveTimer = setTimeout(function() {
-    pushCloudState();
-  }, 800);
+  try {
+    const payload = JSON.stringify({ user: currentUser, state: getStatePayload() });
+    fetch(api + '/state', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: payload,
+    }).catch(function() {});
+  } catch(e) {}
 }
 
 async function pullCloudState() {
@@ -1026,7 +1032,16 @@ saveState = function() {
   if (!currentUser) return;
   const data = getStatePayload();
   try { localStorage.setItem(getStorageKey(), JSON.stringify(data)); } catch(e) {}
-  scheduleCloudSave();
+  const api = getCloudSyncApi();
+  if (api) {
+    try {
+      lastCloudSavePromise = fetch(api + '/state', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ user: currentUser, state: data }),
+      }).catch(function() {});
+    } catch(e) {}
+  }
 };
 
 loadState = function() {

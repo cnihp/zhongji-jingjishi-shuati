@@ -58,3 +58,9 @@ localStorage.setItem('cloudSyncApi', 'https://你的-worker.你的账号.workers
 ```
 
 设置后，用户输入同一个昵称即可跨设备同步答题进度和错题记录。
+
+当前已部署的同步 API：
+
+```text
+https://zhongji-jingjishi-shuati-sync.cnihp.workers.dev
+```

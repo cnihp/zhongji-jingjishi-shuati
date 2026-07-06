@@ -1,0 +1,11 @@
+name = "zhongji-jingjishi-shuati-sync"
+main = "cloudflare/worker.js"
+compatibility_date = "2026-07-06"
+
+[vars]
+ALLOWED_ORIGIN = "*"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "zhongji-jingjishi-shuati"
+database_id = "cc2b554b-a7b9-437b-a357-3381000912c3"
