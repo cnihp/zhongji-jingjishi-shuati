@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>中级经济师 · 刷题工具</title>
+<meta name="description" content="中级经济师经济基础知识与农业经济专业在线刷题工具，支持章节练习、模拟考试、错题复习和学习进度保存。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800;900&amp;family=Noto+Serif+SC:wght@700;900&amp;display=swap" rel="stylesheet">
 <style>
@@ -179,20 +180,26 @@ body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgb
 ::selection{background:rgba(15,118,110,.2);color:var(--ink)}
 .anim-fade,.fade-in{animation:fadeUp .48s cubic-bezier(.2,.8,.2,1) both}
 .app-wrap{width:min(1180px,calc(100% - 40px));max-width:none;margin:0 auto;padding:28px 0 64px}
-.app-header{display:grid;grid-template-columns:1fr auto;gap:20px 28px;align-items:end;text-align:left;padding:34px 0 28px;border-bottom:1px solid var(--line)}
+.app-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 24px;align-items:center;text-align:left;padding:22px 0 18px;border-bottom:1px solid var(--line)}
 .app-header .logo{display:none}
-.app-header h1{font-family:'Noto Serif SC','Noto Sans SC',serif;font-size:clamp(30px,5vw,58px);font-weight:900;line-height:1.05;color:var(--ink);letter-spacing:0;margin:0;max-width:760px;background:none;-webkit-text-fill-color:currentColor}
-.app-header h1::before{content:'2026 STUDY CONSOLE';display:block;width:max-content;margin-bottom:16px;padding:6px 10px;border:1px solid var(--line-strong);border-radius:999px;font-family:'Noto Sans SC',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--jade);background:rgba(255,250,240,.72)}
-.app-header p{font-size:15px;color:var(--muted);max-width:680px;letter-spacing:0;margin:0}
+.app-header h1{font-family:'Noto Serif SC','Noto Sans SC',serif;font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.1;color:var(--ink);letter-spacing:0;margin:0;max-width:760px;background:none;-webkit-text-fill-color:currentColor}
+.app-header h1::before{content:'2026 备考';display:block;width:max-content;margin-bottom:9px;padding:4px 9px;border:1px solid var(--line-strong);border-radius:999px;font-family:'Noto Sans SC',sans-serif;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--jade);background:rgba(255,250,240,.72)}
+.app-header p{font-size:14px;color:var(--muted);max-width:680px;letter-spacing:0;margin:4px 0 0}
 .app-header .glow-line{grid-column:2;grid-row:1 / span 2;width:auto;height:auto;margin:0;background:transparent;border-radius:0;display:flex;align-items:center;justify-content:flex-end}
 .user-section{grid-column:2;justify-content:flex-end;margin-top:0}
+.study-resume{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 15px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-soft)}
+.study-resume-copy{min-width:0}
+.study-resume-label{display:block;font-size:11px;font-weight:900;letter-spacing:.08em;color:var(--jade);margin-bottom:2px}
+.study-resume-text{display:block;font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resume-btn{flex:0 0 auto;border:0;border-radius:7px;padding:10px 16px;background:var(--jade);color:#fff;font:800 13px/1 'Noto Sans SC',sans-serif;cursor:pointer;box-shadow:0 10px 24px rgba(15,118,110,.18)}
+.resume-btn:hover{background:var(--jade-dark);transform:translateY(-1px)}
 .user-badge,.user-badge-simple{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:700;color:var(--charcoal);font-family:inherit;box-shadow:var(--shadow-soft)}
 .user-badge:hover,.user-badge-simple:hover{border-color:var(--line-strong);transform:translateY(-1px)}
 .user-badge .dot,.user-badge-simple .dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 4px rgba(21,128,61,.12)}
 .user-dropdown{background:var(--panel-solid);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
 .user-dropdown button{border-radius:6px;color:var(--muted)}
 .user-dropdown button:hover{background:rgba(15,118,110,.08);color:var(--jade-dark)}
-.stats-row{grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.stats-row{grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
 .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 18px 16px;text-align:left;box-shadow:0 1px 0 rgba(255,255,255,.7) inset;backdrop-filter:blur(16px)}
 .stat-card::before{height:4px;background:linear-gradient(90deg,var(--charcoal),var(--jade));opacity:.86}
 .stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);border-color:var(--line-strong);background:var(--panel)}
@@ -217,7 +224,8 @@ body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgb
 .chip.part-label{border:none;background:transparent;font-size:12px;font-weight:900;color:var(--gold);letter-spacing:.05em}
 .progress-wrap{height:8px;background:rgba(23,32,27,.08);border-radius:999px;margin:20px 0 22px;border:1px solid rgba(23,32,27,.06)}
 .progress-fill{background:linear-gradient(90deg,var(--jade),var(--gold));border-radius:999px}
-.q-card{background:var(--charcoal);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:30px;margin-bottom:16px;box-shadow:0 32px 90px rgba(23,32,27,.23);color:#edf5ef}
+.swipe-hint{display:none;text-align:center;margin:-10px 0 12px;font-size:11px;font-weight:700;color:var(--muted)}
+.q-card{background:var(--charcoal);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:30px;margin-bottom:16px;box-shadow:0 32px 90px rgba(23,32,27,.23);color:#edf5ef;touch-action:pan-y}
 .q-card::before{height:5px;background:linear-gradient(90deg,var(--gold),var(--jade),#9fb6aa)}
 .q-meta{gap:8px;margin-bottom:18px}
 .q-number,.q-tag,.q-chapter{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:900}
@@ -243,6 +251,7 @@ body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgb
 .explanation div:last-child{color:#cbd8d0;line-height:1.8}
 .action-bar{gap:10px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:8px;padding:10px;box-shadow:var(--shadow-soft);position:relative;backdrop-filter:blur(18px);z-index:20}
 .btn{border-radius:6px;font-weight:900;white-space:nowrap}
+.btn[hidden]{display:none!important}
 .btn-primary{background:var(--charcoal);color:#fff;box-shadow:0 12px 28px rgba(23,32,27,.18)}
 .btn-primary:hover:not(:disabled){background:#26362d;transform:translateY(-1px)}
 .btn-success{background:var(--jade);color:#fff;box-shadow:0 12px 28px rgba(15,118,110,.2)}
@@ -282,17 +291,18 @@ body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgb
 ::-webkit-scrollbar-thumb:hover{background:rgba(23,32,27,.28)}
 body>div[style*="text-align:center"]{border-top-color:rgba(23,32,27,.1)!important}
 body>div[style*="text-align:center"] a{color:rgba(23,32,27,.32)!important}
-@media(max-width:760px){.app-wrap{width:min(100% - 28px,1180px);padding:20px 0 44px}.app-header{grid-template-columns:1fr;gap:14px;padding:24px 0 22px}.app-header .glow-line,.user-section{grid-column:1;grid-row:auto;justify-content:flex-start}.app-header h1{font-size:34px}.app-header h1::before{font-size:11px;margin-bottom:12px}.stats-row{grid-template-columns:repeat(2,1fr);gap:10px}.stat-card{padding:15px}.stat-card .num{font-size:28px}.tab-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.tab-btn{font-size:13px;padding:12px 6px}.mode-pills{overflow-x:auto;padding-bottom:2px}.q-card{padding:22px 18px;border-radius:8px}.q-text{font-size:16px}.opt{padding:13px 12px;font-size:14px;gap:11px}.action-bar{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.btn{width:100%;padding:11px 10px;font-size:12px;min-height:44px}.btn-ghost{grid-column:1 / -1}.login-modal{padding:32px 24px 28px}}
+@media(max-width:760px){.app-wrap{width:min(100% - 28px,1180px);padding:12px 0 32px}.app-header{grid-template-columns:1fr auto;gap:10px 12px;padding:16px 0 14px}.app-header .glow-line{grid-column:2;grid-row:1}.user-section{grid-column:1 / -1;grid-row:auto;justify-content:flex-start}.app-header h1{font-size:28px}.app-header h1::before{font-size:10px;margin-bottom:7px}.app-header p{font-size:12px}.rank-btn{padding:9px 11px}.study-resume{padding:12px;gap:10px}.study-resume-text{font-size:13px}.resume-btn{padding:10px 12px}.stats-row{grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}.stat-card{padding:10px 7px;text-align:center}.stat-card .num{font-size:22px}.stat-card .label{font-size:10px;margin-top:4px}.tab-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.tab-btn{font-size:13px;padding:12px 6px}.mode-pills{overflow-x:auto;padding-bottom:2px}.swipe-hint{display:block}.q-card{padding:22px 18px;border-radius:8px}.q-text{font-size:16px}.opt{padding:13px 12px;font-size:14px;gap:11px}.action-bar{position:sticky;bottom:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.btn{width:100%;padding:11px 10px;font-size:12px;min-height:44px}.btn-primary,.btn-success{grid-column:1 / -1;grid-row:1}.btn-ghost{grid-column:1 / -1}.login-modal{padding:32px 24px 28px}}
 </style>
 </head>
 <body>
 <div class="app-wrap">
-<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p><div class="glow-line"><button class="rank-btn" onclick="showRanking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V10M12 20V4M18 20V14"/></svg>排行榜</button></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div></header>
+<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p></div><div class="glow-line"><button class="rank-btn" onclick="showRanking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V10M12 20V4M18 20V14"/></svg>排行榜</button></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div><div class="study-resume"><div class="study-resume-copy"><span class="study-resume-label">继续学习</span><span class="study-resume-text" id="resumeText">从第一题开始，建立今天的学习进度</span></div><button class="resume-btn" id="resumeBtn" type="button">开始刷题</button></div></header>
 <div class="stats-row anim-fade" style="animation-delay:0.1s"><div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div><div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div><div class="stat-card green"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div><div class="stat-card gold"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div></div>
 <div class="tab-bar anim-fade" id="tabBar" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
 <div class="mode-pills anim-fade" style="animation-delay:0.2s" id="modePills"><button class="pill-btn active" data-mode="all">全部</button><button class="pill-btn" data-mode="single">单选题</button><button class="pill-btn" data-mode="multi">多选题</button></div>
 <div id="chapterSection"><div class="chapter-panel"><div class="chip-group" id="chapterBtns"></div></div><div class="section-panel" id="sectionBar" style="display:none"><div class="chip-group" id="sectionBtns"></div></div></div>
 <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="swipe-hint" aria-hidden="true">右滑上一题 · 提交后左滑下一题</div>
 <div class="q-card" id="questionCard"><div id="qContent"><div class="empty-state anim-fade"><div class="icon">&#x1F4D6;</div><p>欢迎使用中级经济师刷题工具，<br>选择模式开始练习吧!</p></div></div></div>
 <div class="action-bar"><button class="btn btn-outline btn-sm" id="prevBtn" disabled>&#x2190; 上一题</button><button class="btn btn-primary" id="submitBtn">提交答案</button><button class="btn btn-outline btn-sm" id="showAnsBtn">看答案</button><button class="btn btn-success btn-sm" id="nextBtn">下一题 &#x2192;</button><button class="btn btn-ghost btn-sm" id="resetBtn">&#x1F504; 重置</button></div>
 </div>
@@ -665,6 +675,16 @@ function render() {
   correctEl.textContent = correct;
   rateEl.textContent = done ? Math.round(correct / done * 100) + '%' : '0%';
 
+  const resumeText = document.getElementById('resumeText');
+  const resumeBtn = document.getElementById('resumeBtn');
+  if (resumeText && resumeBtn) {
+    const activePosition = Math.min(currentIndex + 1, Math.max(qs.length, 1));
+    resumeText.textContent = done
+      ? '已完成 ' + done + ' 题，继续当前第 ' + activePosition + ' 题'
+      : '从第一题开始，建立今天的学习进度';
+    resumeBtn.textContent = done ? '继续刷题' : '开始刷题';
+  }
+
   const wrongCount = wrongSet.size;
   document.getElementById('wrongBadge').textContent = wrongCount;
 
@@ -749,9 +769,12 @@ function render() {
 
   const subBtn = document.getElementById('submitBtn');
   const showBtn = document.getElementById('showAnsBtn');
+  const nextBtn = document.getElementById('nextBtn');
   subBtn.disabled = submitted;
-  if (submitted) subBtn.textContent = '✅ 已判题';
-  else subBtn.textContent = q.type === 'multi' ? '📋 提交多选答案' : '📋 提交答案';
+  subBtn.hidden = !!submitted;
+  showBtn.hidden = !!submitted;
+  nextBtn.hidden = !submitted;
+  if (!submitted) subBtn.textContent = q.type === 'multi' ? '📋 提交多选答案' : '📋 提交答案';
 
   // Option click handlers
   document.querySelectorAll('.opt').forEach(el => {
@@ -839,6 +862,32 @@ document.getElementById('nextBtn').addEventListener('click', function() {
   const qs = getFilteredQuestions();
   if (currentIndex < qs.length - 1) { currentIndex++; saveState(); render(); }
 });
+
+// Swipe on the question card: right for previous, left for next.
+const swipeCard = document.getElementById('questionCard');
+let swipeStartX = 0;
+let swipeStartY = 0;
+
+swipeCard.addEventListener('touchstart', function(e) {
+  if (e.touches.length !== 1) return;
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+}, { passive: true });
+
+swipeCard.addEventListener('touchend', function(e) {
+  if (e.changedTouches.length !== 1) return;
+  const deltaX = e.changedTouches[0].clientX - swipeStartX;
+  const deltaY = e.changedTouches[0].clientY - swipeStartY;
+  if (Math.abs(deltaX) < 64 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.25) return;
+
+  if (deltaX > 0) {
+    const prevBtn = document.getElementById('prevBtn');
+    if (!prevBtn.disabled) prevBtn.click();
+  } else {
+    const nextBtn = document.getElementById('nextBtn');
+    if (!nextBtn.disabled && !nextBtn.hidden) nextBtn.click();
+  }
+}, { passive: true });
 
 // Reset
 document.getElementById('resetBtn').addEventListener('click', function() {
@@ -972,7 +1021,7 @@ document.addEventListener('keydown', function(e) {
     if (!btn.disabled) { currentIndex--; saveState(); render(); }
   } else if (e.key === 'ArrowRight' || e.key === 'd') {
     const btn = document.getElementById('nextBtn');
-    if (!btn.disabled) { currentIndex++; saveState(); render(); }
+    if (!btn.disabled && !btn.hidden) { currentIndex++; saveState(); render(); }
   } else if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
@@ -980,6 +1029,10 @@ document.addEventListener('keydown', function(e) {
   } else if (e.key === 's') {
     document.getElementById('showAnsBtn').click();
   }
+});
+
+document.getElementById('resumeBtn').addEventListener('click', function() {
+  document.getElementById('questionCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 
