@@ -656,7 +656,7 @@ async function ensureCloudReady() {
     cloudApp = cloudApp || window.cloudbase.init({ env: CLOUD_ENV_ID, region: 'ap-shanghai' });
     const auth = cloudApp.auth();
     const loginState = await auth.getLoginState();
-    if (!loginState) await auth.signInAnonymously();
+    if (!loginState) await auth.anonymousAuthProvider().signIn();
     return cloudApp;
   })().catch(error => {
     cloudReadyPromise = null;
