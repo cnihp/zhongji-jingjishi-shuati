@@ -312,7 +312,6 @@ body>div[style*="text-align:center"] a{color:rgba(23,32,27,.32)!important}
 </div>
 <div class="login-overlay" id="loginOverlay" style="display:none"><div class="login-modal"><div class="avatar">&#x1F464;</div><h2>欢迎使用刷题工具</h2><p class="sub">请输入昵称开始刷题，不同用户互不干扰</p><input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20" onkeydown="if(event.key==='Enter')doLogin()"><button class="login-btn" onclick="doLogin()">开始刷题</button><div class="user-list" id="userList"></div></div></div>
 
-<script src="https://static.cloudbase.net/cloudbase-js-sdk/1.7.2/cloudbase.full.js"></script>
 <script src="questions.js"></script>
 
 <script>
@@ -326,11 +325,7 @@ let currentIndex = 0;
 let answeredState = {};
 let wrongSet = new Set();
 const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-const CLOUD_ENV_ID = 'cloud1-d8gogmtxc908aa35a';
-const CLOUD_FUNCTION_NAME = 'syncState';
-const CLOUD_RANKING_USER = '__web_ranking__';
-let cloudApp = null;
-let cloudReadyPromise = null;
+const CLOUD_SYNC_API = 'https://zhongji-jingjishi-shuati-sync.cnihp.workers.dev';
 let cloudWriteQueue = Promise.resolve();
 let cloudErrorVisible = false;
 let answerSaving = false;
@@ -589,6 +584,10 @@ async function applyAnswer(q, selected) {
   return false;
 }
 
+function getCloudSyncApi() {
+  return CLOUD_SYNC_API.replace(/\/+$/, '');
+}
+
 function getStatePayload() {
   const qs = getFilteredQuestions();
   const currentQuestion = qs[currentIndex] || null;
@@ -601,19 +600,6 @@ function getStatePayload() {
     currentFilter,
     currentChapter,
     currentSection,
-  };
-}
-
-function getEmptyStatePayload() {
-  return {
-    answeredState: {},
-    wrongSet: [],
-    currentIndex: 0,
-    currentQuestionId: null,
-    currentTab: 'practice',
-    currentFilter: 'all',
-    currentChapter: 'all',
-    currentSection: 'all',
   };
 }
 
@@ -649,88 +635,21 @@ function getFirstUnansweredIndex() {
   return idx >= 0 ? idx : 0;
 }
 
-async function ensureCloudReady() {
-  if (cloudReadyPromise) return cloudReadyPromise;
-  cloudReadyPromise = (async function() {
-    if (!window.cloudbase) throw new Error('腾讯云组件加载失败');
-    cloudApp = cloudApp || window.cloudbase.init({ env: CLOUD_ENV_ID });
-    const auth = cloudApp.auth();
-    const loginState = await auth.getLoginState();
-    if (!loginState) await auth.anonymousAuthProvider().signIn();
-    return cloudApp;
-  })().catch(error => {
-    cloudReadyPromise = null;
-    throw error;
-  });
-  return cloudReadyPromise;
-}
-
-async function callCloudFunction(action, user, state) {
-  const app = await ensureCloudReady();
-  const response = await app.callFunction({
-    name: CLOUD_FUNCTION_NAME,
-    data: { action, user, state },
-    parse: true,
-  });
-  let result = response && response.result;
-  if (typeof result === 'string') {
-    try { result = JSON.parse(result); } catch(e) {}
-  }
-  if (!result || result.ok !== true) {
-    throw new Error(result && result.error ? result.error : '云端请求失败');
-  }
-  return result;
-}
-
-function buildRankingEntry(user, state) {
-  const answers = Object.values((state && state.answeredState) || {}).filter(answer => answer && answer.submitted);
-  const correct = answers.filter(answer => answer.isCorrect).length;
-  return {
-    name: user,
-    done: answers.length,
-    correct,
-    rate: answers.length ? Math.round((correct / answers.length) * 100) : 0,
-    updatedAt: Date.now(),
-  };
-}
-
-async function updateCloudRanking(user, state) {
-  try {
-    const result = await callCloudFunction('get', CLOUD_RANKING_USER);
-    const rankingState = result.state && typeof result.state === 'object' ? result.state : {};
-    const users = rankingState.users && typeof rankingState.users === 'object' ? rankingState.users : {};
-    users[user] = buildRankingEntry(user, state);
-    await callCloudFunction('set', CLOUD_RANKING_USER, { users });
-  } catch(error) {
-    console.warn('排行榜更新失败', error);
-  }
-}
-
 async function cloudRequest(path, options = {}) {
-  const route = path.split('?')[0];
-  const body = options.body ? JSON.parse(options.body) : {};
-
-  if (route === '/state') {
-    const query = new URLSearchParams(path.split('?')[1] || '');
-    const result = await callCloudFunction('get', query.get('user') || '');
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(getCloudSyncApi() + path, { ...options, signal: controller.signal });
+    let data = null;
+    try { data = await response.json(); } catch(e) {}
+    if (!response.ok || !data || data.ok !== true) {
+      throw new Error(data && data.error ? data.error : '云端请求失败');
+    }
     cloudErrorVisible = false;
-    return { ok: true, state: result.state || null };
+    return data;
+  } finally {
+    clearTimeout(timeout);
   }
-
-  if (route === '/ranking') {
-    const result = await callCloudFunction('get', CLOUD_RANKING_USER);
-    const rankingUsers = Object.values((result.state && result.state.users) || {})
-      .sort((left, right) => right.correct - left.correct || right.done - left.done || right.updatedAt - left.updatedAt)
-      .slice(0, 100);
-    cloudErrorVisible = false;
-    return { ok: true, users: rankingUsers };
-  }
-
-  const state = route === '/reset' ? getEmptyStatePayload() : getStatePayload();
-  await callCloudFunction('set', body.user || '', state);
-  if (route === '/answer' || route === '/reset') await updateCloudRanking(body.user || '', state);
-  cloudErrorVisible = false;
-  return { ok: true };
 }
 
 async function pullCloudState() {
@@ -740,8 +659,6 @@ async function pullCloudState() {
     if (data.state) applyStatePayload(data.state);
     return true;
   } catch(error) {
-    window.__lastCloudError = error && (error.message || error.code || String(error));
-    console.error('CloudBase 读取失败', error);
     notifyCloudError('无法读取云端记录，请检查网络后重试。');
     return false;
   }
@@ -1307,14 +1224,6 @@ function syncControlsFromState() {
 
 document.addEventListener('DOMContentLoaded', async function() {
   clearLegacyLocalProgress();
-  if (new URLSearchParams(location.search).has('cloudTest')) {
-    try {
-      await callCloudFunction('ping', 'cloud-test');
-      document.documentElement.dataset.cloudTest = 'ok';
-    } catch(error) {
-      document.documentElement.dataset.cloudTest = error && (error.message || error.code || String(error));
-    }
-  }
   const savedUser = sessionStorage.getItem('examCurrentUser');
   if (savedUser) {
     await loginAs(savedUser);
