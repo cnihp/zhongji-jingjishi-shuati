@@ -740,6 +740,7 @@ async function pullCloudState() {
     if (data.state) applyStatePayload(data.state);
     return true;
   } catch(error) {
+    console.error('CloudBase 读取失败', error);
     notifyCloudError('无法读取云端记录，请检查网络后重试。');
     return false;
   }
