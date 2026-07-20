@@ -1307,6 +1307,14 @@ function syncControlsFromState() {
 
 document.addEventListener('DOMContentLoaded', async function() {
   clearLegacyLocalProgress();
+  if (new URLSearchParams(location.search).has('cloudTest')) {
+    try {
+      await callCloudFunction('ping', 'cloud-test');
+      document.documentElement.dataset.cloudTest = 'ok';
+    } catch(error) {
+      document.documentElement.dataset.cloudTest = error && (error.message || error.code || String(error));
+    }
+  }
   const savedUser = sessionStorage.getItem('examCurrentUser');
   if (savedUser) {
     await loginAs(savedUser);
