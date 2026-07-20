@@ -1,6 +1,9 @@
 name = "zhongji-jingjishi-shuati-sync"
 main = "cloudflare/worker.js"
-compatibility_date = "2026-07-06"
+compatibility_date = "2026-07-08"
+
+[observability]
+enabled = true
 
 [vars]
 ALLOWED_ORIGIN = "*"

@@ -323,8 +323,9 @@ let answeredState = {};
 let wrongSet = new Set();
 const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
 const CLOUD_SYNC_API = 'https://zhongji-jingjishi-shuati-sync.cnihp.workers.dev';
-let cloudSaveTimer = null;
-let lastCloudSavePromise = null;
+let cloudWriteQueue = Promise.resolve();
+let cloudErrorVisible = false;
+let answerSaving = false;
 
 // ==================== Helpers ====================
 function getTypeLabel(q) {
@@ -548,32 +549,78 @@ function buildExplanation(q) {
     '<p>正确答案为 ' + correctStr + '，对应选项是：' + correctText + '。</p>';
 }
 
-function applyAnswer(q, selected) {
-  if (!answeredState[q.id]) answeredState[q.id] = { selected: [], submitted: false, isCorrect: false };
-  const state = answeredState[q.id];
-  state.selected = [...selected];
-  state.submitted = true;
-  state.isCorrect = gradeSelection(q, state.selected);
-  if (!state.isCorrect && currentTab !== 'wrong') wrongSet.add(q.id);
-  else if (state.isCorrect) wrongSet.delete(q.id);
-  saveState();
+async function applyAnswer(q, selected) {
+  const previousState = answeredState[q.id]
+    ? { ...answeredState[q.id], selected: [...answeredState[q.id].selected] }
+    : null;
+  const wasWrong = wrongSet.has(q.id);
+  const nextState = {
+    selected: [...selected],
+    submitted: true,
+    isCorrect: gradeSelection(q, selected),
+  };
+
+  answeredState[q.id] = nextState;
+  if (nextState.isCorrect) wrongSet.delete(q.id);
+  else wrongSet.add(q.id);
+  answerSaving = true;
+  render();
+
+  const saved = await saveAnswerToCloud(q.id, nextState);
+  answerSaving = false;
+  if (saved) {
+    render();
+    return true;
+  }
+
+  if (previousState) answeredState[q.id] = previousState;
+  else answeredState[q.id] = { selected: [...selected], submitted: false, isCorrect: false };
+  if (wasWrong) wrongSet.add(q.id);
+  else wrongSet.delete(q.id);
+  render();
+  return false;
 }
 
 function getCloudSyncApi() {
-  const api = (localStorage.getItem('cloudSyncApi') || CLOUD_SYNC_API || '').trim();
-  return api.replace(/\/+$/, '');
+  return CLOUD_SYNC_API.replace(/\/+$/, '');
 }
 
 function getStatePayload() {
-  return { answeredState, wrongSet: [...wrongSet], currentIndex };
+  const qs = getFilteredQuestions();
+  const currentQuestion = qs[currentIndex] || null;
+  return {
+    answeredState,
+    wrongSet: [...wrongSet],
+    currentIndex,
+    currentQuestionId: currentQuestion ? currentQuestion.id : null,
+    currentTab,
+    currentFilter,
+    currentChapter,
+    currentSection,
+  };
 }
 
 function applyStatePayload(data) {
   if (!data) return;
   if (data.answeredState) answeredState = data.answeredState;
-  if (data.wrongSet) wrongSet = new Set(data.wrongSet);
-  if (Number.isInteger(data.currentIndex)) currentIndex = data.currentIndex;
+  wrongSet = data.wrongSet ? new Set(data.wrongSet) : new Set(
+    Object.keys(answeredState)
+      .filter(id => answeredState[id].submitted && !answeredState[id].isCorrect)
+      .map(id => /^\d+$/.test(id) ? Number(id) : id)
+  );
+  if (['practice', 'exam', 'chapter', 'wrong'].includes(data.currentTab)) currentTab = data.currentTab;
+  if (['all', 'single', 'multi'].includes(data.currentFilter)) currentFilter = data.currentFilter;
+  if (typeof data.currentChapter === 'string') currentChapter = data.currentChapter;
+  if (typeof data.currentSection === 'string') currentSection = data.currentSection;
+
+  const qs = getFilteredQuestions();
+  const questionIndex = data.currentQuestionId === null || data.currentQuestionId === undefined
+    ? -1
+    : qs.findIndex(q => String(q.id) === String(data.currentQuestionId));
+  if (questionIndex >= 0) currentIndex = questionIndex;
+  else if (Number.isInteger(data.currentIndex)) currentIndex = data.currentIndex;
   else currentIndex = getFirstUnansweredIndex();
+  if (currentIndex >= qs.length) currentIndex = Math.max(0, qs.length - 1);
 }
 
 function getFirstUnansweredIndex() {
@@ -585,48 +632,88 @@ function getFirstUnansweredIndex() {
   return idx >= 0 ? idx : 0;
 }
 
-function scheduleCloudSave() {
-  const api = getCloudSyncApi();
-  if (!api || !currentUser) return;
-  clearTimeout(cloudSaveTimer);
+async function cloudRequest(path, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    const payload = JSON.stringify({ user: currentUser, state: getStatePayload() });
-    fetch(api + '/state', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: payload,
-    }).catch(function() {});
-  } catch(e) {}
+    const response = await fetch(getCloudSyncApi() + path, { ...options, signal: controller.signal });
+    let data = null;
+    try { data = await response.json(); } catch(e) {}
+    if (!response.ok || !data || data.ok !== true) {
+      throw new Error(data && data.error ? data.error : '云端请求失败');
+    }
+    cloudErrorVisible = false;
+    return data;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function pullCloudState() {
-  const api = getCloudSyncApi();
-  if (!api || !currentUser) return false;
+  if (!currentUser) return false;
   try {
-    const res = await fetch(api + '/state?user=' + encodeURIComponent(currentUser));
-    if (!res.ok) return false;
-    const data = await res.json();
-    if (data && data.ok && data.state) {
-      applyStatePayload(data.state);
-      try { localStorage.setItem(getStorageKey(), JSON.stringify(getStatePayload())); } catch(e) {}
-      render();
-      return true;
-    }
-  } catch(e) {}
-  return false;
+    const data = await cloudRequest('/state?user=' + encodeURIComponent(currentUser));
+    if (data.state) applyStatePayload(data.state);
+    return true;
+  } catch(error) {
+    notifyCloudError('无法读取云端记录，请检查网络后重试。');
+    return false;
+  }
 }
 
-async function pushCloudState() {
-  const api = getCloudSyncApi();
-  if (!api || !currentUser) return false;
+function enqueueCloudWrite(path, payload) {
+  const operation = cloudWriteQueue.then(() => cloudRequest(path, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  }));
+  cloudWriteQueue = operation.catch(() => {});
+  return operation;
+}
+
+function notifyCloudError(message) {
+  if (cloudErrorVisible) return;
+  cloudErrorVisible = true;
+  alert(message);
+}
+
+async function saveProgressToCloud() {
+  if (!currentUser) return false;
   try {
-    const res = await fetch(api + '/state', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ user: currentUser, state: getStatePayload() }),
+    await enqueueCloudWrite('/progress', {
+      user: currentUser,
+      progress: getStatePayload(),
     });
-    return res.ok;
-  } catch(e) {
+    return true;
+  } catch(error) {
+    notifyCloudError('当前位置保存失败，请检查网络后重试。');
+    return false;
+  }
+}
+
+async function saveAnswerToCloud(questionId, answer) {
+  if (!currentUser) return false;
+  try {
+    await enqueueCloudWrite('/answer', {
+      user: currentUser,
+      questionId,
+      answer,
+      progress: getStatePayload(),
+    });
+    return true;
+  } catch(error) {
+    notifyCloudError('答案保存失败，已保留当前选择，请重试。');
+    return false;
+  }
+}
+
+async function resetCloudProgress() {
+  if (!currentUser) return false;
+  try {
+    await enqueueCloudWrite('/reset', { user: currentUser });
+    return true;
+  } catch(error) {
+    notifyCloudError('重置失败，请检查网络后重试。');
     return false;
   }
 }
@@ -647,17 +734,17 @@ function getFilteredQuestions() {
 
 // ==================== Save / Load ====================
 function saveState() {
-  const data = { answeredState, wrongSet: [...wrongSet] };
-  try { localStorage.setItem('examState', JSON.stringify(data)); } catch(e) {}
+  return saveProgressToCloud();
 }
-function loadState() {
-  try {
-    const raw = localStorage.getItem('examState');
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (data.answeredState) answeredState = data.answeredState;
-    if (data.wrongSet) wrongSet = new Set(data.wrongSet);
-  } catch(e) {}
+async function loadState() {
+  answeredState = {};
+  wrongSet = new Set();
+  currentFilter = 'all';
+  currentTab = 'practice';
+  currentChapter = 'all';
+  currentSection = 'all';
+  currentIndex = 0;
+  return pullCloudState();
 }
 
 // ==================== Render ====================
@@ -764,13 +851,13 @@ function render() {
   document.getElementById('qContent').innerHTML = html;
 
   // Buttons
-  document.getElementById('prevBtn').disabled = (currentIndex === 0 || qs.length === 0);
-  document.getElementById('nextBtn').disabled = (currentIndex >= qs.length - 1 || qs.length === 0);
+  document.getElementById('prevBtn').disabled = (answerSaving || currentIndex === 0 || qs.length === 0);
+  document.getElementById('nextBtn').disabled = (answerSaving || currentIndex >= qs.length - 1 || qs.length === 0);
 
   const subBtn = document.getElementById('submitBtn');
   const showBtn = document.getElementById('showAnsBtn');
   const nextBtn = document.getElementById('nextBtn');
-  subBtn.disabled = submitted;
+  subBtn.disabled = submitted || answerSaving;
   subBtn.hidden = !!submitted;
   showBtn.hidden = !!submitted;
   nextBtn.hidden = !submitted;
@@ -778,7 +865,8 @@ function render() {
 
   // Option click handlers
   document.querySelectorAll('.opt').forEach(el => {
-    el.addEventListener('click', function() {
+    el.addEventListener('click', async function() {
+      if (answerSaving) return;
       if (submitted && q.type !== 'multi') return;
       const idx = parseInt(this.dataset.optidx);
       const qs2 = getFilteredQuestions();
@@ -787,7 +875,7 @@ function render() {
       if (!answeredState[q2.id]) answeredState[q2.id] = { selected: [], submitted: false, isCorrect: false };
       const st = answeredState[q2.id];
       if (q2.type === 'single') {
-        applyAnswer(q2, [idx]);
+        await applyAnswer(q2, [idx]);
       } else {
         const nextSelected = [...st.selected];
         const pos = st.selected.indexOf(idx);
@@ -796,7 +884,6 @@ function render() {
         st.selected = nextSelected;
         st.submitted = false;
         st.isCorrect = false;
-        saveState();
       }
       render();
     });
@@ -809,7 +896,7 @@ function render() {
 
 // ==================== Actions ====================
 // Submit
-document.getElementById('submitBtn').addEventListener('click', function() {
+document.getElementById('submitBtn').addEventListener('click', async function() {
   const qs = getFilteredQuestions();
   if (qs.length === 0) return;
   const q = qs[currentIndex];
@@ -818,19 +905,16 @@ document.getElementById('submitBtn').addEventListener('click', function() {
     // Hint: select at least one option
     return;
   }
-  applyAnswer(q, state.selected);
+  await applyAnswer(q, state.selected);
   render();
 });
 
 // Show Answer
-document.getElementById('showAnsBtn').addEventListener('click', function() {
+document.getElementById('showAnsBtn').addEventListener('click', async function() {
   const qs = getFilteredQuestions();
   if (qs.length === 0) return;
   const q = qs[currentIndex];
   const correctAnswer = normalizeAnswer(q);
-  const correctStr = getCorrectStr(q);
-
-  // Select the correct answers
   if (!answeredState[q.id]) {
     answeredState[q.id] = { selected: [...correctAnswer], submitted: false, isCorrect: true };
   } else {
@@ -838,19 +922,8 @@ document.getElementById('showAnsBtn').addEventListener('click', function() {
     st.selected = [...correctAnswer];
     st.submitted = false;
   }
-  saveState();
-
-  // Show explanation
-  const explBox = document.querySelector('.explanation');
-  if (explBox) {
-    explBox.classList.add('show');
-    explBox.innerHTML = '<div class="label">📝 参考答案：' + correctStr + '</div>' +
-      '<div>' + buildExplanation(q) + '</div>';
-  }
-
-  // Also reveal options visually (by re-rendering with submitted=true on the state)
   const st = answeredState[q.id];
-  applyAnswer(q, st.selected);
+  await applyAnswer(q, st.selected);
   render();
 });
 
@@ -890,12 +963,17 @@ swipeCard.addEventListener('touchend', function(e) {
 }, { passive: true });
 
 // Reset
-document.getElementById('resetBtn').addEventListener('click', function() {
+document.getElementById('resetBtn').addEventListener('click', async function() {
   if (!confirm('确定重置所有答题记录？')) return;
+  if (!await resetCloudProgress()) return;
   answeredState = {};
   wrongSet = new Set();
+  currentFilter = 'all';
+  currentTab = 'practice';
+  currentChapter = 'all';
+  currentSection = 'all';
   currentIndex = 0;
-  saveState();
+  syncControlsFromState();
   render();
 });
 
@@ -1038,15 +1116,18 @@ document.getElementById('resumeBtn').addEventListener('click', function() {
 
 // ==================== User Login System ====================
 let currentUser = null;
-const STORAGE_PREFIX = 'examState_';
 
-function getStorageKey() { return STORAGE_PREFIX + currentUser; }
-
-function getSavedUsers() {
-  try { return JSON.parse(localStorage.getItem('examUsers') || '[]'); } catch(e) { return []; }
-}
-function saveUserList(users) {
-  try { localStorage.setItem('examUsers', JSON.stringify(users)); } catch(e) {}
+function clearLegacyLocalProgress() {
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key === 'examState' || key === 'examUsers' || key === 'cloudSyncApi' || key.startsWith('examState_'))) {
+        keys.push(key);
+      }
+    }
+    keys.forEach(key => localStorage.removeItem(key));
+  } catch(e) {}
 }
 
 function showLoginModal() {
@@ -1059,158 +1140,158 @@ function hideLoginModal() {
   document.getElementById('loginOverlay').style.display = 'none';
 }
 
-function doLogin() {
-  const name = document.getElementById('loginInput').value.trim();
-  if (!name) { alert('请输入昵称'); return; }
-  loginAs(name);
+function setLoginBusy(isBusy) {
+  const button = document.querySelector('.login-modal .login-btn');
+  const input = document.getElementById('loginInput');
+  if (button) {
+    button.disabled = isBusy;
+    button.textContent = isBusy ? '正在读取云端记录...' : '开始刷题';
+  }
+  if (input) input.disabled = isBusy;
 }
 
-function loginAs(name) {
-  currentUser = name;
-  // Save to user list
-  const users = getSavedUsers();
-  if (!users.includes(name)) {
-    users.push(name);
-    saveUserList(users);
+async function doLogin() {
+  const name = document.getElementById('loginInput').value.trim();
+  if (!name) { alert('请输入昵称'); return; }
+  await loginAs(name);
+}
+
+async function loginAs(name) {
+  currentUser = name.trim();
+  setLoginBusy(true);
+  const loaded = await loadState();
+  setLoginBusy(false);
+  if (!loaded) {
+    currentUser = null;
+    try { sessionStorage.removeItem('examCurrentUser'); } catch(e) {}
+    showLoginModal();
+    return false;
   }
-  // Load user data
-  loadState();
+
+  try { sessionStorage.setItem('examCurrentUser', currentUser); } catch(e) {}
+  syncControlsFromState();
   hideLoginModal();
   document.getElementById('userNameDisplay').textContent = currentUser;
   render();
+  return true;
 }
 
 function logoutUser() {
   currentUser = null;
-  document.getElementById('userDropdown').classList.remove('show');
-  // Reset everything
   answeredState = {};
   wrongSet = new Set();
+  currentFilter = 'all';
+  currentTab = 'practice';
+  currentChapter = 'all';
+  currentSection = 'all';
   currentIndex = 0;
+  try { sessionStorage.removeItem('examCurrentUser'); } catch(e) {}
+  document.getElementById('userNameDisplay').textContent = '未登录';
+  syncControlsFromState();
   showLoginModal();
   render();
 }
 
+function syncControlsFromState() {
+  document.querySelectorAll('.tab-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.tab === currentTab);
+  });
+  document.querySelectorAll('.pill-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.mode === currentFilter);
+  });
 
-// Override save/load to use user-specific keys
-const _origSaveState = saveState;
-const _origLoadState = loadState;
-
-saveState = function() {
-  if (!currentUser) return;
-  const data = getStatePayload();
-  try { localStorage.setItem(getStorageKey(), JSON.stringify(data)); } catch(e) {}
-  const api = getCloudSyncApi();
-  if (api) {
-    try {
-      lastCloudSavePromise = fetch(api + '/state', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ user: currentUser, state: data }),
-      }).catch(function() {});
-    } catch(e) {}
+  const chapterSection = document.getElementById('chapterSection');
+  const modePills = document.getElementById('modePills');
+  if (currentTab === 'chapter') {
+    chapterSection.style.display = 'block';
+    modePills.style.display = 'none';
+    buildChapterButtons();
+    buildSectionButtons(currentChapter);
+    document.querySelectorAll('#chapterBtns .chip[data-chapter]').forEach(button => {
+      button.classList.toggle('active', button.dataset.chapter === currentChapter);
+    });
+    document.querySelectorAll('#sectionBtns .chip[data-section]').forEach(button => {
+      button.classList.toggle('active', button.dataset.section === currentSection);
+    });
+  } else {
+    chapterSection.style.display = 'none';
+    modePills.style.display = currentTab === 'exam' ? 'none' : 'flex';
   }
-};
+}
 
-loadState = function() {
-  answeredState = {};
-  wrongSet = new Set();
-  currentIndex = 0;
-  if (!currentUser) return;
-  try {
-    const raw = localStorage.getItem(getStorageKey());
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    applyStatePayload(data);
-  } catch(e) {}
-};
-
-// Init: check if user already logged in from session
-document.addEventListener('DOMContentLoaded', function() {
-  // Check if there's a saved current user
+document.addEventListener('DOMContentLoaded', async function() {
+  clearLegacyLocalProgress();
   const savedUser = sessionStorage.getItem('examCurrentUser');
   if (savedUser) {
-    loginAs(savedUser);
+    await loginAs(savedUser);
   } else {
     showLoginModal();
   }
 });
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[character]);
+}
 
-// Also save current user to session storage when login
-const _origLoginAs = loginAs;
-loginAs = function(name) {
-  _origLoginAs(name);
-  try { sessionStorage.setItem('examCurrentUser', name); } catch(e) {}
-  pullCloudState();
-};
+function ensureRankingOverlay() {
+  let overlay = document.getElementById('rankOverlay');
+  if (overlay) return overlay;
+  overlay = document.createElement('div');
+  overlay.id = 'rankOverlay';
+  overlay.className = 'rank-overlay';
+  overlay.style.display = 'none';
+  overlay.innerHTML = '<div class="rank-modal"><h2>云端排行榜</h2><p class="sub">数据来自云端答题记录</p><div id="rankContent"></div><button class="rank-close" type="button">关闭</button></div>';
+  overlay.querySelector('.rank-close').addEventListener('click', () => { overlay.style.display = 'none'; });
+  overlay.addEventListener('click', event => { if (event.target === overlay) overlay.style.display = 'none'; });
+  document.body.appendChild(overlay);
+  return overlay;
+}
 
-// And clear from session on logout
-const _origLogout = logoutUser;
-logoutUser = function() {
-  _origLogout();
-  try { sessionStorage.removeItem('examCurrentUser'); } catch(e) {}
-};
+async function showRanking() {
+  const overlay = ensureRankingOverlay();
+  const container = overlay.querySelector('#rankContent');
+  container.innerHTML = '<div class="rank-empty">正在读取云端数据...</div>';
+  overlay.style.display = 'flex';
 
-
-
-function showRanking() {
-  var overlay = document.getElementById('rankOverlay');
-  var container = document.getElementById('rankContent');
-  var users = [];
+  let users = [];
   try {
-    var savedUsers = JSON.parse(localStorage.getItem('examUsers') || '[]');
-    savedUsers.forEach(function(name) {
-      try {
-        var raw = localStorage.getItem('examState_' + name);
-        if (!raw) return;
-        var data = JSON.parse(raw);
-        var done = 0, correct = 0;
-        if (data.answeredState) {
-          for (var k in data.answeredState) {
-            var s = data.answeredState[k];
-            if (s.submitted) {
-              done++;
-              if (s.isCorrect) correct++;
-            }
-          }
-        }
-        users.push({name: name, done: done, correct: correct, rate: done > 0 ? Math.round(correct / done * 100) : 0});
-      } catch(e) {}
-    });
-  } catch(e) {}
-
-  // Sort by correct count desc, then rate desc
-  users.sort(function(a, b) {
-    if (a.correct !== b.correct) return b.correct - a.correct;
-    return b.rate - a.rate;
-  });
-
-  if (users.length === 0) {
-    container.innerHTML = '<div class="rank-empty">还没有用户数据，快去刷题吧!</div>';
-    overlay.style.display = 'flex';
+    const data = await cloudRequest('/ranking');
+    users = Array.isArray(data.users) ? data.users : [];
+  } catch(error) {
+    container.innerHTML = '<div class="rank-empty">排行榜读取失败，请稍后重试。</div>';
     return;
   }
 
-  var html = '<table class="rank-table"><thead><tr><th>排名</th><th style="text-align:left">用户</th><th>已答题</th><th>正确数</th><th>正确率</th></tr></thead><tbody>';
-  var medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
-  var rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+  if (users.length === 0) {
+    container.innerHTML = '<div class="rank-empty">还没有云端答题记录，快去刷题吧!</div>';
+    return;
+  }
 
-  users.forEach(function(u, i) {
-    var rank = i + 1;
-    var isCurrentUser = currentUser && u.name === currentUser;
-    var cls = isCurrentUser ? 'current' : '';
-    var rankDisplay = i < 3 ? '<span class="rank-num ' + rankClasses[i] + '">' + medals[i] + '</span>' : '<span class="rank-num">' + rank + '</span>';
-    var nameDisplay = u.name + (isCurrentUser ? '<span class="you-badge">你</span>' : '');
-    html += '<tr class="' + cls + '"><td>' + rankDisplay + '</td><td class="user-name">' + nameDisplay + '</td><td><span class="stat-num">' + u.done + '</span></td><td><span class="stat-num">' + u.correct + '</span></td><td>' + u.rate + '%</td></tr>';
+  let html = '<table class="rank-table"><thead><tr><th>排名</th><th style="text-align:left">用户</th><th>已答题</th><th>正确数</th><th>正确率</th></tr></thead><tbody>';
+  const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
+  const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+  users.forEach(function(user, index) {
+    const rank = index + 1;
+    const isCurrentUser = currentUser && user.name === currentUser;
+    const rowClass = isCurrentUser ? 'current' : '';
+    const rankDisplay = index < 3
+      ? '<span class="rank-num ' + rankClasses[index] + '">' + medals[index] + '</span>'
+      : '<span class="rank-num">' + rank + '</span>';
+    const nameDisplay = escapeHtml(user.name) + (isCurrentUser ? '<span class="you-badge">你</span>' : '');
+    html += '<tr class="' + rowClass + '"><td>' + rankDisplay + '</td><td class="user-name">' + nameDisplay + '</td><td><span class="stat-num">' + user.done + '</span></td><td><span class="stat-num">' + user.correct + '</span></td><td>' + user.rate + '%</td></tr>';
   });
 
   html += '</tbody></table>';
   container.innerHTML = html;
-  overlay.style.display = 'flex';
 }
 
 // ==================== Init ====================
-loadState();
 buildChapterButtons();
 render();
 </script>
