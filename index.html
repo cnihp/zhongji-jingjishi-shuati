@@ -653,7 +653,7 @@ async function ensureCloudReady() {
   if (cloudReadyPromise) return cloudReadyPromise;
   cloudReadyPromise = (async function() {
     if (!window.cloudbase) throw new Error('腾讯云组件加载失败');
-    cloudApp = cloudApp || window.cloudbase.init({ env: CLOUD_ENV_ID, region: 'ap-shanghai' });
+    cloudApp = cloudApp || window.cloudbase.init({ env: CLOUD_ENV_ID });
     const auth = cloudApp.auth();
     const loginState = await auth.getLoginState();
     if (!loginState) await auth.anonymousAuthProvider().signIn();
