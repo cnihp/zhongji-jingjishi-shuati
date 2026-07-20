@@ -186,7 +186,7 @@ body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgb
 .app-header h1::before{content:'2026 备考';display:block;width:max-content;margin-bottom:9px;padding:4px 9px;border:1px solid var(--line-strong);border-radius:999px;font-family:'Noto Sans SC',sans-serif;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--jade);background:rgba(255,250,240,.72)}
 .app-header p{font-size:14px;color:var(--muted);max-width:680px;letter-spacing:0;margin:4px 0 0}
 .app-header .glow-line{grid-column:2;grid-row:1 / span 2;width:auto;height:auto;margin:0;background:transparent;border-radius:0;display:flex;align-items:center;justify-content:flex-end}
-.user-section{grid-column:2;justify-content:flex-end;margin-top:0}
+.user-section{grid-column:2;justify-content:flex-end;align-items:center;gap:8px;margin-top:0;flex-wrap:wrap}
 .study-resume{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 15px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-soft)}
 .study-resume-copy{min-width:0}
 .study-resume-label{display:block;font-size:11px;font-weight:900;letter-spacing:.08em;color:var(--jade);margin-bottom:2px}
@@ -196,6 +196,10 @@ body::before{inset:0;background:linear-gradient(120deg,rgba(255,252,245,.96),rgb
 .user-badge,.user-badge-simple{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:700;color:var(--charcoal);font-family:inherit;box-shadow:var(--shadow-soft)}
 .user-badge:hover,.user-badge-simple:hover{border-color:var(--line-strong);transform:translateY(-1px)}
 .user-badge .dot,.user-badge-simple .dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 4px rgba(21,128,61,.12)}
+.logout-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,250,240,.62);color:var(--muted);font:800 12px/1 'Noto Sans SC',sans-serif;cursor:pointer;box-shadow:var(--shadow-soft);transition:color .2s ease,border-color .2s ease,background .2s ease,transform .2s ease}
+.logout-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.logout-btn:hover{color:#9f1239;border-color:rgba(190,24,93,.28);background:#fff1f2;transform:translateY(-1px)}
+.logout-btn:focus-visible{outline:3px solid rgba(15,118,110,.2);outline-offset:2px}
 .user-dropdown{background:var(--panel-solid);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
 .user-dropdown button{border-radius:6px;color:var(--muted)}
 .user-dropdown button:hover{background:rgba(15,118,110,.08);color:var(--jade-dark)}
@@ -296,7 +300,7 @@ body>div[style*="text-align:center"] a{color:rgba(23,32,27,.32)!important}
 </head>
 <body>
 <div class="app-wrap">
-<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p></div><div class="glow-line"><button class="rank-btn" onclick="showRanking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V10M12 20V4M18 20V14"/></svg>排行榜</button></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div></div><div class="study-resume"><div class="study-resume-copy"><span class="study-resume-label">继续学习</span><span class="study-resume-text" id="resumeText">从第一题开始，建立今天的学习进度</span></div><button class="resume-btn" id="resumeBtn" type="button">开始刷题</button></div></header>
+<header class="app-header anim-fade"><div class="logo">&#x1F4D6;</div><div><h1>中级经济师 · 刷题工具</h1><p>&#x300A;经济基础知识&#x300B;·&#x300A;农业经济专业知识与实务&#x300B;</p></div><div class="glow-line"><button class="rank-btn" onclick="showRanking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V10M12 20V4M18 20V14"/></svg>排行榜</button></div><div class="user-section"><div class="user-badge-simple"><span class="dot"></span><span id="userNameDisplay">未登录</span></div><button class="logout-btn" type="button" onclick="logoutUser()" aria-label="退出当前用户"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"/><path d="M14 8l4 4-4 4"/><path d="M18 12H9"/></svg><span>退出登录</span></button></div><div class="study-resume"><div class="study-resume-copy"><span class="study-resume-label">继续学习</span><span class="study-resume-text" id="resumeText">从第一题开始，建立今天的学习进度</span></div><button class="resume-btn" id="resumeBtn" type="button">开始刷题</button></div></header>
 <div class="stats-row anim-fade" style="animation-delay:0.1s"><div class="stat-card"><div class="num" id="totalQ">0</div><div class="label">总题数</div></div><div class="stat-card"><div class="num" id="doneQ">0</div><div class="label">已答题</div></div><div class="stat-card green"><div class="num" id="correctQ">0</div><div class="label">正确数</div></div><div class="stat-card gold"><div class="num" id="rateQ">0%</div><div class="label">正确率</div></div></div>
 <div class="tab-bar anim-fade" id="tabBar" style="animation-delay:0.15s"><button class="tab-btn active" data-tab="practice">&#x1F4DD; 练习模式</button><button class="tab-btn" data-tab="exam">&#x1F3AF; 模拟考试</button><button class="tab-btn" data-tab="chapter">&#x1F4DA; 章节练习</button><button class="tab-btn" data-tab="wrong">&#x274C; 错题集 <span class="badge" id="wrongBadge">0</span></button></div>
 <div class="mode-pills anim-fade" style="animation-delay:0.2s" id="modePills"><button class="pill-btn active" data-mode="all">全部</button><button class="pill-btn" data-mode="single">单选题</button><button class="pill-btn" data-mode="multi">多选题</button></div>
@@ -308,7 +312,6 @@ body>div[style*="text-align:center"] a{color:rgba(23,32,27,.32)!important}
 </div>
 <div class="login-overlay" id="loginOverlay" style="display:none"><div class="login-modal"><div class="avatar">&#x1F464;</div><h2>欢迎使用刷题工具</h2><p class="sub">请输入昵称开始刷题，不同用户互不干扰</p><input type="text" id="loginInput" placeholder="请输入你的昵称..." maxlength="20" onkeydown="if(event.key==='Enter')doLogin()"><button class="login-btn" onclick="doLogin()">开始刷题</button><div class="user-list" id="userList"></div></div></div>
 
-<div style="text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.04)"><a href="#" onclick="logoutUser();return false" style="color:rgba(255,255,255,0.15);font-size:11px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.3)'" onmouseout="this.style.color='rgba(255,255,255,0.15)'">注销</a></div>
 <script src="questions.js"></script>
 
 <script>
